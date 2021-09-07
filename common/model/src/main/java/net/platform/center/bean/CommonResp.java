@@ -19,4 +19,9 @@ public class CommonResp {
     private String code = "1";
 
     private String message = "success";
+
+    public static void setErrRsp(CommonResp errRsp, String errMsg) {
+        errRsp.setCode("0");
+        errRsp.setMessage(errMsg);
+    }
 }
