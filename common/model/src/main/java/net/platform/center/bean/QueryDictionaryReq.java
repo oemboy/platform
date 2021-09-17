@@ -14,5 +14,5 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class QueryDictionaryReq extends RequestHeader {
     @JsonProperty("body")
-    private QueryDictionaryBodyReq queryDictionaryBodyReq;
+    private QueryDictionaryBodyReq body;
 }
