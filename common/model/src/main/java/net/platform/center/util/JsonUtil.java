@@ -6,7 +6,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
 
 /**
  * @Author: bing zi
@@ -76,4 +79,24 @@ public class JsonUtil {
         }
     }
 
+    public static byte[] toJsonAsBytes(Object obj) {
+        try {
+            return OBJECT_MAPPER.writeValueAsBytes(obj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T readValue(byte[] contentByte, Class<T> type) {
+        if (ArrayUtils.isEmpty(contentByte)) {
+            log.warn("content or type is empty");
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.readValue(contentByte, type);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
 }
