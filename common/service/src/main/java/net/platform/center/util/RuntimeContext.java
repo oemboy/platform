@@ -1,11 +1,12 @@
 
 package net.platform.center.util;
 
-import lombok.Data;
-
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
+
+import lombok.Data;
 
 /**
  * @Author: bing zi
@@ -22,7 +23,9 @@ public class RuntimeContext {
 
     private LocalDateTime downSystemRespLocalTime;
 
-    private Map<String, String> contextMap = new HashMap<>();
+    private Map<String, String> contextMap = new ConcurrentHashMap<>();
+
+    private Stack<String> regions = new Stack<>();
 
     public RuntimeContext() {
         this.reqLocalTime = LocalDateTime.now();

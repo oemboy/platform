@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.NonNull;
 
 import java.util.Arrays;
 import java.util.Stack;
@@ -19,8 +20,6 @@ import static org.apache.commons.lang3.ArrayUtils.contains;
  */
 public class ApplicationContextHolder implements ApplicationContextAware {
     private static final ThreadLocal<RuntimeContext> RUNTIME_CONTEXT_HOLDER = new ThreadLocal<>();
-
-    private static final ThreadLocal<Stack<String>> REGION = new ThreadLocal<>();
 
     private static ApplicationContext context;
 
@@ -39,8 +38,17 @@ public class ApplicationContextHolder implements ApplicationContextAware {
         RUNTIME_CONTEXT_HOLDER.remove();
     }
 
+
+    public static void setContextMapEntry(String key, String value) {
+        getRuntimeContext().getContextMap().put(key, value);
+    }
+
+    public static void removeContextMapEntry(String key) {
+        getRuntimeContext().getContextMap().remove(key);
+    }
+
     public static String getRegion() {
-        Stack<String> stack = REGION.get();
+        Stack<String> stack = getRuntimeContext().getRegions();
         return CollectionUtils.isEmpty(stack) ? null : stack.peek();
     }
 
@@ -48,27 +56,20 @@ public class ApplicationContextHolder implements ApplicationContextAware {
         if (StringUtils.isBlank(region)) {
             return;
         }
-        if (REGION.get() == null) {
-            REGION.set(new Stack<>());
-        }
-        REGION.get().push(region);
+
+        getRuntimeContext().getRegions().push(region);
     }
 
     public static void clearRegion() {
-        Stack<String> stack = REGION.get();
-        if (stack == null) {
-            return;
-        }
+        Stack<String> stack = getRuntimeContext().getRegions();
+
         if (stack.size() > 0) {
             stack.pop();
-        }
-        if (stack.size() == 0) {
-            REGION.remove();
         }
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         setContext(applicationContext);
     }
 
