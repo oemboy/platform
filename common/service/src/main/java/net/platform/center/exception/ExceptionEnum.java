@@ -1,3 +1,4 @@
+
 package net.platform.center.exception;
 
 import lombok.ToString;
@@ -25,9 +26,10 @@ public enum ExceptionEnum implements ExceptionCode {
     /**
      * 公共异常编码
      */
-    ERR_PARAM_VALID("1000000", "Parameter valid error, message: {0}"),
-    ;
+    ERR_PARAM_VALID("1000000", "Parameter valid error, message: {0}"),;
+
     private final String code;
+
     private final String message;
 
     ExceptionEnum(String code, String message) {
