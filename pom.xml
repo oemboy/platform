@@ -33,6 +33,8 @@
         <pagehelper.version>5.2.1</pagehelper.version>
         <docker-maven-version>0.36.1</docker-maven-version>
 
+        <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
+
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
     </properties>
 
@@ -123,6 +125,11 @@
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper</artifactId>
                 <version>${pagehelper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation-api.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

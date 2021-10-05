@@ -9,6 +9,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -110,6 +113,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> exception(Exception ex, WebRequest request) {
         return exception(ex, new HttpHeaders(), HttpStatus.OK, request);
+    }
+
+    /**
+     * 兼容处理校验框架的 ConstraintViolationException
+     *
+     * @param ex 校验异常
+     * @param request 当前请求对象
+     * @return 参数校验处理异常
+     */
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<Object> constraintViolationException(ConstraintViolationException ex, WebRequest request) {
+        return this.exception(new BusinessException(ExceptionEnum.ERR_PARAM_VALID,
+            ex.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.joining())),
+            new HttpHeaders(), HttpStatus.OK, request);
     }
 
     /**
