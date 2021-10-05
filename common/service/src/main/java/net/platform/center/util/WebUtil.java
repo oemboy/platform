@@ -38,7 +38,10 @@ public abstract class WebUtil {
      * @return 当前请求Url, 忽略context-path
      */
     public static String currentUrlWithinApplication() {
-        final HttpServletRequest request = currentHttpServletRequest();
+        return currentUrlWithinApplication(currentHttpServletRequest());
+    }
+
+    public static String currentUrlWithinApplication(final HttpServletRequest request) {
         return Objects.nonNull(request) ? UrlPathHelper.defaultInstance.getPathWithinApplication(request) : EMPTY;
     }
 
