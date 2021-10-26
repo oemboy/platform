@@ -125,7 +125,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> constraintViolationException(ConstraintViolationException ex, WebRequest request) {
         return this.exception(new BusinessException(ExceptionEnum.ERR_PARAM_VALID,
-            ex.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.joining())),
+            ex.getConstraintViolations()
+                .stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining(","))),
             new HttpHeaders(), HttpStatus.OK, request);
     }
 
@@ -179,7 +182,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return {@linkplain ExceptionCode 异常信息}
      */
     protected ExceptionCode handleFieldError(List<FieldError> allFieldErr) {
-        final String errMsg = allFieldErr.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining());
+        final String errMsg = allFieldErr.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(","));
         return new BusinessException(ERR_PARAM_VALID, errMsg);
     }
 
