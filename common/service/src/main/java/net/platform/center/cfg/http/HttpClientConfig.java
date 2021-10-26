@@ -40,6 +40,7 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -114,7 +115,7 @@ public class HttpClientConfig {
 
     @Bean
     public ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {
-        return new HttpComponentsClientHttpRequestFactory(httpClient);
+        return new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
     }
 
     @Bean

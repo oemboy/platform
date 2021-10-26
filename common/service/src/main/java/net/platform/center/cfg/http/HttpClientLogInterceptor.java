@@ -1,15 +1,23 @@
 
 package net.platform.center.cfg.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StreamUtils;
 
 /**
  * @Author: bing zi
@@ -52,10 +60,14 @@ public class HttpClientLogInterceptor implements ClientHttpRequestInterceptor {
                 log.debug("===========================response begin===========================");
                 log.debug("Status code  : {}", response.getStatusCode());
                 log.debug("Status text  : {}", response.getStatusText());
-                log.debug("Headers      : {}", response.getHeaders());
+                HttpHeaders headers = response.getHeaders();
+                log.debug("Headers      : {}", headers);
                 // 优先取 response 字符编码
-                // 流会耗尽吗??
-                // log.debug("Response body: {}", StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8));
+                InputStream stream = response.getBody();
+                if (stream instanceof ByteArrayInputStream) {
+                    log.debug("Response body: {}", StreamUtils.copyToString(stream, responseCharset(headers)));
+
+                }
             } catch (IOException e) {
                 log.error(e.getMessage());
             }
@@ -64,4 +76,14 @@ public class HttpClientLogInterceptor implements ClientHttpRequestInterceptor {
         }
     }
 
+    private Charset responseCharset(HttpHeaders headers) {
+        if (Objects.isNull(headers)) {
+            return StandardCharsets.UTF_8;
+        }
+        List<Charset> acceptCharset = headers.getAcceptCharset();
+        if (CollectionUtils.isNotEmpty(acceptCharset)) {
+            return StandardCharsets.UTF_8;
+        }
+        return acceptCharset.stream().filter(StandardCharsets.UTF_8::equals).findFirst().orElse(acceptCharset.get(0));
+    }
 }
