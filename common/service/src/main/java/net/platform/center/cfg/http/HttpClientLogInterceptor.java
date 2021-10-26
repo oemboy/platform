@@ -15,9 +15,9 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.util.StreamUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StreamUtils;
 
 /**
  * @Author: bing zi
@@ -81,7 +81,7 @@ public class HttpClientLogInterceptor implements ClientHttpRequestInterceptor {
             return StandardCharsets.UTF_8;
         }
         List<Charset> acceptCharset = headers.getAcceptCharset();
-        if (CollectionUtils.isNotEmpty(acceptCharset)) {
+        if (CollectionUtils.isEmpty(acceptCharset)) {
             return StandardCharsets.UTF_8;
         }
         return acceptCharset.stream().filter(StandardCharsets.UTF_8::equals).findFirst().orElse(acceptCharset.get(0));
