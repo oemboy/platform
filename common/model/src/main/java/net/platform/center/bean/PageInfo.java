@@ -24,6 +24,6 @@ public class PageInfo {
 
     public static Integer getCurrentPageNum(PageInfo pageInfo) {
         return pageInfo == null || pageInfo.getCurrentPageNum() == null || pageInfo.getCurrentPageNum() <= 0
-            ? Integer.valueOf(1) : pageInfo.getPageSize();
+            ? Integer.valueOf(1) : pageInfo.getCurrentPageNum();
     }
 }
