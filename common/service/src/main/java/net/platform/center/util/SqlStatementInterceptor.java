@@ -79,7 +79,7 @@ public class SqlStatementInterceptor implements Interceptor {
     public String getParameterValue(Object obj) {
         String value;
         if (obj instanceof String) {
-            value = "'" + StringUtils.trim(obj.toString()) + "'";
+            value = "'" + obj + "'";
         } else if (obj instanceof Date) {
             DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.CHINA);
             value = "'" + formatter.format((Date) obj) + "'";
