@@ -19,6 +19,8 @@ import org.springframework.util.StreamUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static net.platform.center.util.AntPathUtil.decodeUrl;
+
 /**
  * @Author: bing zi
  * @Date: 2021/8/31
@@ -41,10 +43,10 @@ public class HttpClientLogInterceptor implements ClientHttpRequestInterceptor {
         if (log.isDebugEnabled()) {
             try {
                 log.debug("===========================request begin===========================");
-                log.debug("URI         : {}", request.getURI());
+                // 应该优先取 header 包含的字符编码, 此处偷懒
+                log.debug("URI         : {}", decodeUrl(request.getURI().toString()));
                 log.debug("Method      : {}", request.getMethod());
                 log.debug("Headers     : {}", request.getHeaders());
-                // TODO 优先取 header 包含的字符编码
                 log.debug("Request body: {}", new String(body, StandardCharsets.UTF_8));
             } catch (Exception e) {
                 log.error(e.getMessage());

@@ -21,11 +21,15 @@ public abstract class SpelUtil {
 
     private static final Map<String, Expression> CACHE = new LRUMap<>(1024);
 
+    private SpelUtil() {
+    }
+
     public static Expression templateExpression(String expr) {
         Expression expression = CACHE.get(expr);
         if (Objects.isNull(expression)) {
             synchronized (SpelUtil.class) {
-                CACHE.putIfAbsent(expr, expression = PARSER.parseExpression(expr, TEMPLATE_EXPRESSION));
+                expression = PARSER.parseExpression(expr, TEMPLATE_EXPRESSION);
+                CACHE.putIfAbsent(expr, expression);
             }
         }
         return expression;

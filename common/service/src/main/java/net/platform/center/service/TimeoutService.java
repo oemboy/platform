@@ -19,7 +19,7 @@ public abstract class TimeoutService {
 
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(1);
 
-    public static <T> CompletableFuture<T> failAfter(final Duration duration, Class<T> clazz) {
+    public static <T> CompletableFuture<T> failAfter(final Duration duration) {
         final CompletableFuture<T> promise = new CompletableFuture<>();
         SCHEDULER.schedule(() -> {
             final TimeoutException ex = new TimeoutException("timeout after " + formatTime(duration));
@@ -38,16 +38,16 @@ public abstract class TimeoutService {
                 log.info("cancel task: {}", future.cancel(false));
             }
         } catch (Exception e) {
-            log.error("cancel task error: ", e.getMessage());
+            log.error("cancel task error: {}", e.getMessage());
         }
     }
 
-    public <T> CompletableFuture<T> completableFutureInTime(Duration duration, Class<T> clazz) {
-        CompletableFuture<T> timeout = failAfter(duration, clazz);
-        CompletableFuture<T> future = CompletableFuture.supplyAsync(() -> doBusinessInTime());
+    public <T> CompletableFuture<T> completableFutureInTime(Duration duration) {
+        CompletableFuture<T> timeout = failAfter(duration);
+        CompletableFuture<T> future = CompletableFuture.supplyAsync(this::doBusinessInTime);
 
         return timeout.applyToEitherAsync(future, i -> i).exceptionally(ex -> {
-            log.error("error:", ex.getMessage());
+            log.error("error: {}", ex.getMessage());
             cancelTask(future);
             return null;
         });

@@ -1,15 +1,20 @@
 
 package net.platform.center.util;
 
+import static net.platform.center.exception.ExceptionEnum.ERR_COMMON_VALID;
+
+import java.io.IOException;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
+import net.platform.center.exception.BusinessException;
 
 /**
  * @Author: bing zi
@@ -49,7 +54,7 @@ public class JsonUtil {
         try {
             return OBJECT_MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new BusinessException(ERR_COMMON_VALID, e, e.getMessage());
         }
     }
 
@@ -83,7 +88,7 @@ public class JsonUtil {
         try {
             return OBJECT_MAPPER.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new BusinessException(ERR_COMMON_VALID, e, e.getMessage());
         }
     }
 

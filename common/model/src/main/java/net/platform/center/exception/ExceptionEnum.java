@@ -6,8 +6,8 @@ import lombok.ToString;
 /**
  * 异常码枚举, 实现{@linkplain ExceptionCode}.
  *
- * @author Jack
- * @date 2021/9/5
+ * @Author: Jack
+ * @Date: 2021/9/5
  * @since 1.0.0
  */
 @ToString
@@ -26,7 +26,12 @@ public enum ExceptionEnum implements ExceptionCode {
     /**
      * 公共异常编码
      */
-    ERR_PARAM_VALID("1000000", "Parameter valid error, message: {0}"),;
+    ERR_PARAM_VALID("1000000", "Parameter valid error, message: {0}"),
+
+    /**
+     * 公共通用编码
+     */
+    ERR_COMMON_VALID("1000001", "error, message: {0}");
 
     private final String code;
 

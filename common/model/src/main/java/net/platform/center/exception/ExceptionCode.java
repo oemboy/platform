@@ -12,8 +12,8 @@ import java.text.MessageFormat;
  *     }
  * </pre>
  *
- * @author Jack
- * @date 2021/9/5
+ * @Author: Jack
+ * @Date: 2021/9/5
  * @since 1.0.0
  */
 public interface ExceptionCode {

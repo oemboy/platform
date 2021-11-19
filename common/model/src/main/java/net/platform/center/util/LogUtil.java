@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 public class LogUtil {
     public static final String TRANS_IDO = "TRANSIDO";
 
+    private LogUtil() {
+    }
+
     public static String getLogId() {
         return MDC.get(TRANS_IDO);
     }
