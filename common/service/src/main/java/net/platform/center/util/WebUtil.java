@@ -19,6 +19,9 @@ import org.springframework.web.util.UrlPathHelper;
  */
 public abstract class WebUtil {
 
+    private WebUtil() {
+    }
+
     /**
      * 获取当前线程的请求对象
      *

@@ -1,8 +1,17 @@
 
 package net.platform.center.cfg.http;
 
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import static net.platform.center.exception.ExceptionEnum.ERR_COMMON_VALID;
+
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+
+import javax.net.ssl.SSLContext;
+
 import org.apache.http.auth.AuthSchemeProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.AuthSchemes;
@@ -48,10 +57,9 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import javax.net.ssl.SSLContext;
-import java.nio.charset.CodingErrorAction;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import net.platform.center.exception.BusinessException;
 
 /**
  * @Author: bing zi
@@ -88,10 +96,11 @@ public class HttpClientConfig {
             connectionManager.setMaxTotal(maxTotal);
             return connectionManager;
 
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
             log.error("HttpClientConnectionManager build error:", e);
-            throw new RuntimeException(e);
+            throw new BusinessException(ERR_COMMON_VALID, e, e.getMessage());
         }
+
     }
 
     @Bean
@@ -120,7 +129,7 @@ public class HttpClientConfig {
 
     @Bean
     public RestTemplate restTemplate(ClientHttpRequestFactory clientHttpRequestFactory,
-                                     List<ClientHttpRequestInterceptor> interceptors) {
+        List<ClientHttpRequestInterceptor> interceptors) {
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
         List<HttpMessageConverter<?>> list = restTemplate.getMessageConverters();
         for (HttpMessageConverter<?> converter : list) {
@@ -156,8 +165,7 @@ public class HttpClientConfig {
             .build();
 
         int processors = Runtime.getRuntime().availableProcessors();
-        IOReactorConfig ioReactorConfig =
-            IOReactorConfig.custom().setIoThreadCount(Math.max(processors, 16)).build();
+        IOReactorConfig ioReactorConfig = IOReactorConfig.custom().setIoThreadCount(Math.max(processors, 16)).build();
         ConnectingIOReactor reactor = new DefaultConnectingIOReactor(ioReactorConfig);
         PoolingNHttpClientConnectionManager conMgr = new PoolingNHttpClientConnectionManager(reactor, schemeRegistry);
         conMgr.setMaxTotal(maxTotal);

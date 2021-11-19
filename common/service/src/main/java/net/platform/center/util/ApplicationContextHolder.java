@@ -1,6 +1,11 @@
 
 package net.platform.center.util;
 
+import static org.apache.commons.lang3.ArrayUtils.contains;
+
+import java.util.Arrays;
+import java.util.Stack;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -8,11 +13,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
-
-import java.util.Arrays;
-import java.util.Stack;
-
-import static org.apache.commons.lang3.ArrayUtils.contains;
 
 /**
  * @Author: bing zi
@@ -66,7 +66,7 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     public static void clearRegion() {
         Stack<String> stack = getRuntimeContext().getRegions();
 
-        if (stack.size() > 0) {
+        if (CollectionUtils.isNotEmpty(stack)) {
             stack.pop();
         }
     }
