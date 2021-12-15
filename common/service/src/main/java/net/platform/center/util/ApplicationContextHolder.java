@@ -4,7 +4,7 @@ package net.platform.center.util;
 import static org.apache.commons.lang3.ArrayUtils.contains;
 
 import java.util.Arrays;
-import java.util.Stack;
+import java.util.Deque;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -51,7 +51,7 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     }
 
     public static String getRegion() {
-        Stack<String> stack = getRuntimeContext().getRegions();
+        Deque<String> stack = getRuntimeContext().getRegions();
         return CollectionUtils.isEmpty(stack) ? null : stack.peek();
     }
 
@@ -64,7 +64,7 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     }
 
     public static void clearRegion() {
-        Stack<String> stack = getRuntimeContext().getRegions();
+        Deque<String> stack = getRuntimeContext().getRegions();
 
         if (CollectionUtils.isNotEmpty(stack)) {
             stack.pop();

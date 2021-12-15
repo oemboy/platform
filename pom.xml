@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.platform.center</groupId>
     <artifactId>center</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>center</name>
     <packaging>pom</packaging>
     <description>platform project pom</description>
@@ -29,6 +29,8 @@
 
         <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
         <spring.version>2.3.12.RELEASE</spring.version>
+        <jasypt.version>3.0.4</jasypt.version>
+        <skywalking.version>8.8.0</skywalking.version>
 
         <pagehelper.version>5.2.1</pagehelper.version>
         <docker-maven-version>0.36.1</docker-maven-version>
@@ -131,6 +133,16 @@
                 <artifactId>jakarta.validation-api</artifactId>
                 <version>${jakarta.validation-api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-spring-boot-starter</artifactId>
+                <version>${jasypt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.skywalking</groupId>
+                <artifactId>apm-toolkit-log4j-2.x</artifactId>
+                <version>${skywalking.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -218,6 +230,40 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.ulisesbocchio</groupId>
+                    <artifactId>jasypt-maven-plugin</artifactId>
+                    <version>${jasypt.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter-web</artifactId>
+                            <version>2.5.4</version>
+                            <exclusions>
+                                <exclusion>
+                                    <artifactId>spring-boot-starter-logging</artifactId>
+                                    <groupId>org.springframework.boot</groupId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter-log4j2</artifactId>
+                            <version>2.5.4</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter</artifactId>
+                            <version>2.5.4</version>
+                            <exclusions>
+                                <exclusion>
+                                    <artifactId>spring-boot-starter-logging</artifactId>
+                                    <groupId>org.springframework.boot</groupId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>
