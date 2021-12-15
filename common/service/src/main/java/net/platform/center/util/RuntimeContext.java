@@ -2,8 +2,9 @@
 package net.platform.center.util;
 
 import java.time.LocalDateTime;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.Data;
@@ -25,7 +26,7 @@ public class RuntimeContext {
 
     private Map<String, String> contextMap = new ConcurrentHashMap<>();
 
-    private Stack<String> regions = new Stack<>();
+    private Deque<String> regions = new LinkedList<>();
 
     public RuntimeContext() {
         this.reqLocalTime = LocalDateTime.now();
