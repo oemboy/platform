@@ -30,6 +30,8 @@
         <module name="ConstantName"/>
         <!-- 没用的import检查，比如：1.没有被用到2.重复的3.import java.lang的4.import 与该类在同一个package的 -->
         <module name="UnusedImports"/>
+        <module name="AvoidStarImport"/>
+        <module name="RedundantImport"/>
 
         <!-- 长度方面的检查 -->
 
