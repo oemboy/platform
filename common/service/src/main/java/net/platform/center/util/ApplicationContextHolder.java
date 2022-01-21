@@ -38,11 +38,11 @@ public class ApplicationContextHolder implements ApplicationContextAware {
         RUNTIME_CONTEXT_HOLDER.remove();
     }
 
-    public static String getContextMapValue(@NonNull String key) {
+    public static Object getContextMapValue(@NonNull String key) {
         return getRuntimeContext().getContextMap().get(key);
     }
 
-    public static void setContextMapValue(@NonNull String key, String value) {
+    public static void setContextMapValue(@NonNull String key, Object value) {
         getRuntimeContext().getContextMap().put(key, value);
     }
 
