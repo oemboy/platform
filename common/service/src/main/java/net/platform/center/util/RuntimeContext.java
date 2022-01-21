@@ -24,7 +24,7 @@ public class RuntimeContext {
 
     private LocalDateTime downSystemRespLocalTime;
 
-    private Map<String, String> contextMap = new ConcurrentHashMap<>();
+    private Map<String, Object> contextMap = new ConcurrentHashMap<>();
 
     private Deque<String> regions = new LinkedList<>();
 
