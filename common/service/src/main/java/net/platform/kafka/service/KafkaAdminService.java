@@ -1,9 +1,16 @@
 
 package net.platform.kafka.service;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.admin.DescribeClusterOptions;
@@ -17,19 +24,13 @@ import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaAdmin;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import net.platform.center.util.JsonUtil;
 
 /**
  * @Author: bing zi
@@ -49,7 +50,7 @@ public class KafkaAdminService {
         try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
             CreateTopicsResult result = client.createTopics(list);
             result.all().get();
-            log.info(result.toString());
+            log.info(JsonUtil.toJsonPrettyString(result));
         } catch (InterruptedException e) {
             log.error("InterruptedException: ", e);
         } catch (ExecutionException e) {
@@ -61,7 +62,7 @@ public class KafkaAdminService {
         try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
             DeleteTopicsResult result = client.deleteTopics(topicNames);
             result.all().get();
-            log.info(result.toString());
+            log.info(JsonUtil.toJsonPrettyString(result));
         } catch (InterruptedException e) {
             log.error("InterruptedException: ", e);
         } catch (ExecutionException e) {
@@ -75,8 +76,8 @@ public class KafkaAdminService {
                 .map(name -> new ConfigResource(ConfigResource.Type.TOPIC, name))
                 .collect(Collectors.toList());
             DescribeConfigsResult result = client.describeConfigs(configResources);
-            Map<ConfigResource, Config> configResourceConfigMap = result.all().get();
-            log.info(configResourceConfigMap.toString());
+            result.all().get();
+            log.info(JsonUtil.toJsonPrettyString(result));
         } catch (InterruptedException e) {
             log.error("InterruptedException: ", e);
         } catch (ExecutionException e) {
@@ -91,10 +92,7 @@ public class KafkaAdminService {
 
             DescribeClusterResult result = client.describeCluster(options);
             log.info("Cluster id: {}, controller: {}", result.clusterId().get(), result.controller().get());
-            for (Node node : result.nodes().get()) {
-                log.info(node.toString());
-
-            }
+            JsonUtil.toJsonPrettyString(result);
         } catch (InterruptedException e) {
             log.error("InterruptedException: ", e);
         } catch (ExecutionException e) {
@@ -102,18 +100,21 @@ public class KafkaAdminService {
         }
     }
 
-    public void listAllTopics(Boolean listInternal) {
+    public Set<String> listAllTopics(Boolean listInternal) {
         try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
             final ListTopicsOptions options = new ListTopicsOptions();
             options.listInternal(listInternal);
 
             ListTopicsResult result = client.listTopics(options);
-            log.info("topicNames in cluster:", result.names().get());
+            Set<String> topics = result.names().get();
+            log.info("topicNames in cluster: {}", topics);
+            return topics;
         } catch (InterruptedException e) {
             log.error("InterruptedException: ", e);
         } catch (ExecutionException e) {
             log.error("ExecutionException: ", e);
         }
+        return Collections.emptySet();
     }
 
     public Map<String, TopicDescription> describeTopics(Collection<String> topicNames, Boolean includeAuthorized) {
@@ -122,7 +123,8 @@ public class KafkaAdminService {
             options.includeAuthorizedOperations(includeAuthorized);
 
             DescribeTopicsResult result = client.describeTopics(topicNames, options);
-            result.all().get().forEach((k, v) -> log.info("{} ===> {}", k, v));
+            // result.all().get().forEach((k, v) -> log.info("{} ===> {}", k, v));
+            log.info(JsonUtil.toJsonPrettyString(result.all().get()));
             return result.all().get();
         } catch (InterruptedException e) {
             log.error("InterruptedException: ", e);
