@@ -10,8 +10,8 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.SuccessCallback;
 
-import net.platform.kafka.bean.CommonMessage;
 import net.platform.center.util.LogUtil;
+import net.platform.kafka.bean.CommonMessage;
 
 /**
  * @Author: bing zi
@@ -33,25 +33,30 @@ public interface Producer {
                 final ProducerRecord<Object, Object> failedRecord = ex.getFailedProducerRecord();
                 final String logId = getStringHeader(failedRecord, LogUtil.TRANS_IDO);
                 LogUtil.setMdcInfo(logId);
+                parseFailedResult(failedRecord);
             } finally {
                 LogUtil.clearMdcInfo();
             }
         };
     }
 
+    default void parseFailedResult(ProducerRecord<Object, Object> failedRecord) {
+    }
+
     default SuccessCallback<SendResult<Object, Object>> successCallBack() {
         return result -> {
             try {
-                final ProducerRecord<Object, Object> failedRecord = result.getProducerRecord();
-                final String logId = getStringHeader(failedRecord, LogUtil.TRANS_IDO);
-                String topic = result.getRecordMetadata().topic();
-                int partition = result.getRecordMetadata().partition();
-                long offset = result.getRecordMetadata().offset();
+                final ProducerRecord<Object, Object> successRecord = result.getProducerRecord();
+                final String logId = getStringHeader(successRecord, LogUtil.TRANS_IDO);
                 LogUtil.setMdcInfo(logId);
+                parseSuccessResult(result);
             } finally {
                 LogUtil.clearMdcInfo();
             }
         };
+    }
+
+    default void parseSuccessResult(SendResult<Object, Object> result) {
     }
 
     default String getStringHeader(ProducerRecord<Object, Object> record, String headerName) {
