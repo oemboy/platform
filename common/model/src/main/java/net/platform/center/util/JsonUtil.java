@@ -5,6 +5,7 @@ import static net.platform.center.exception.ExceptionEnum.ERR_COMMON_VALID;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -65,6 +66,19 @@ public class JsonUtil {
         }
         try {
             return OBJECT_MAPPER.readValue(content, type);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public static <T> T readValue(String content, TypeReference<T> valueTypeRef) {
+        if (StringUtils.isEmpty(content) || valueTypeRef == null) {
+            log.warn("content or typeReference is empty");
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.readValue(content, valueTypeRef);
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
             return null;
