@@ -38,6 +38,10 @@
         <docker-maven-version>0.36.1</docker-maven-version>
         <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
+
+        <origSourceDir>${project.basedir}/src/main/java</origSourceDir>
+        <sourceDir>${origSourceDir}</sourceDir>
+        <delombokedSourceDir>${project.build.directory}/delombok</delombokedSourceDir>
     </properties>
 
     <modules>
@@ -218,7 +222,29 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>lombokcode</id>
+            <properties>
+                <sourceDir>${delombokedSourceDir}</sourceDir>
+            </properties>
+        </profile>
+        <profile>
+            <id>default</id>
+            <build>
+                <plugins>
+                    <!-- checkstyle插件 -->
+
+                </plugins>
+            </build>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
     <build>
+        <sourceDirectory>${sourceDir}</sourceDirectory>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -288,12 +314,12 @@
                     </compilerArgument>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
+                    <!--<excludes>${delombokedSourceDir}/*.java</excludes>-->
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -317,11 +343,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-            </plugin>
-
             <!-- findbugs插件 ：静态检查代码的错误-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -349,6 +370,11 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+            </plugin>
+
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
@@ -368,6 +394,40 @@
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- lombok 代码打包 -->
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.18.20.0</version>
+                <executions>
+                    <execution>
+                        <id>delombok</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                        <configuration>
+                            <addOutputDirectory>false</addOutputDirectory>
+                            <sourceDirectory>${origSourceDir}</sourceDirectory>
+                            <outputDirectory>${delombokedSourceDir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>

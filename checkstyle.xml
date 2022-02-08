@@ -6,6 +6,11 @@
     <property name="severity" value="error"/>
     <property name="charset" value="utf-8"/>
 
+    <module name="BeforeExecutionExclusionFileFilter">
+        <property name="fileNamePattern"
+                  value=".*[\\/]target[\\/]delombok[\\/].*$"/>
+    </module>
+
     <module name="TreeWalker">
         <!-- 命名方面的检查 -->
         <!-- 局部的final变量，包括catch中的参数的检查 -->
