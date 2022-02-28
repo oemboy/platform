@@ -33,6 +33,10 @@ public class JsonUtil {
 
     }
 
+    public static ObjectMapper getObjectMapper() {
+        return OBJECT_MAPPER;
+    }
+
     public static String toJsonString(Object obj) {
         try {
             return OBJECT_MAPPER.writeValueAsString(obj);
