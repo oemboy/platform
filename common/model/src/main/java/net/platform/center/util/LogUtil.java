@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LogUtil {
     public static final String TRANS_IDO = "TRANSIDO";
+    private static final String DFX_LOG_NAME = "DFXLogName";
+    private static final String DFX_LOG = "DFXLog";
 
     private LogUtil() {
     }
@@ -20,8 +22,21 @@ public class LogUtil {
         return MDC.get(TRANS_IDO);
     }
 
+    public static String getDfxLogName() {
+        return MDC.get(DFX_LOG_NAME);
+    }
+
+    public static String getDfxLog() {
+        return MDC.get(DFX_LOG);
+    }
+
     public static void setMdcInfo(String logId) {
         MDC.put(TRANS_IDO, logId);
+    }
+
+    public static void setMdcDfxInfo(String dfxLogName, String dfxLog) {
+        MDC.put(DFX_LOG_NAME, dfxLogName);
+        MDC.put(DFX_LOG, dfxLog);
     }
 
     public static void clearMdcInfo() {
