@@ -1,6 +1,7 @@
 
 package net.platform.center.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LogUtil {
     public static final String TRANS_IDO = "TRANSIDO";
+
     private static final String DFX_LOG_NAME = "DFXLogName";
+
     private static final String DFX_LOG = "DFXLog";
 
     private LogUtil() {
@@ -31,12 +34,18 @@ public class LogUtil {
     }
 
     public static void setMdcInfo(String logId) {
-        MDC.put(TRANS_IDO, logId);
+        if (StringUtils.isNotBlank(logId)) {
+            MDC.put(TRANS_IDO, logId);
+        }
     }
 
     public static void setMdcDfxInfo(String dfxLogName, String dfxLog) {
-        MDC.put(DFX_LOG_NAME, dfxLogName);
-        MDC.put(DFX_LOG, dfxLog);
+        if (StringUtils.isNotBlank(dfxLogName)) {
+            MDC.put(DFX_LOG_NAME, dfxLogName);
+        }
+        if (StringUtils.isNotBlank(dfxLog)) {
+            MDC.put(DFX_LOG, dfxLog);
+        }
     }
 
     public static void clearMdcInfo() {
