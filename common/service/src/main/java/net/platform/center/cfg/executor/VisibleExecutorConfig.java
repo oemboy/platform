@@ -1,11 +1,15 @@
 
 package net.platform.center.cfg.executor;
 
+import java.util.Optional;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskDecorator;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import lombok.Data;
@@ -30,18 +34,21 @@ public class VisibleExecutorConfig {
 
     private String threadNamePrefix;
 
+    private boolean waitForTasksToCompleteOnShutdown;
+
     @Bean("visibleExecutor")
-    public ThreadPoolTaskExecutor threadPoolExecutor() {
+    public ThreadPoolTaskExecutor threadPoolExecutor(@Autowired(required = false) TaskDecorator decorator,
+        @Autowired(required = false) RejectedExecutionHandler rejectedHandler) {
         ThreadPoolTaskExecutor executor = new VisibleThreadPoolTaskExecutor();
         executor.setCorePoolSize(coreThreadNumber);
         executor.setMaxPoolSize(maxTheadNumber);
         executor.setQueueCapacity(queueSize);
         executor.setKeepAliveSeconds(keepAliveSeconds);
         executor.setThreadNamePrefix(threadNamePrefix);
-
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.setTaskDecorator(new ContextCopyDecorator());
-
+        executor.setWaitForTasksToCompleteOnShutdown(waitForTasksToCompleteOnShutdown);
+        executor.setRejectedExecutionHandler(
+            Optional.ofNullable(rejectedHandler).orElse(new ThreadPoolExecutor.CallerRunsPolicy()));
+        executor.setTaskDecorator(Optional.ofNullable(decorator).orElse(new ContextCopyDecorator()));
         executor.initialize();
         return executor;
 
