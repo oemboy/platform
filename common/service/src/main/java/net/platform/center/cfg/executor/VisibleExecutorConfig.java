@@ -2,6 +2,7 @@
 package net.platform.center.cfg.executor;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -22,35 +23,53 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration(proxyBeanMethods = false)
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "spring.visible.executor")
+@ConfigurationProperties(prefix = "spring.visible")
 public class VisibleExecutorConfig {
-    private int coreThreadNumber;
 
-    private int maxTheadNumber;
+    private Executor executor;
 
-    private int queueSize;
-
-    private int keepAliveSeconds;
-
-    private String threadNamePrefix;
-
-    private boolean waitForTasksToCompleteOnShutdown;
+    private ContextCopy contextCopy;
 
     @Bean("visibleExecutor")
     public ThreadPoolTaskExecutor threadPoolExecutor(@Autowired(required = false) TaskDecorator decorator,
         @Autowired(required = false) RejectedExecutionHandler rejectedHandler) {
-        ThreadPoolTaskExecutor executor = new VisibleThreadPoolTaskExecutor();
-        executor.setCorePoolSize(coreThreadNumber);
-        executor.setMaxPoolSize(maxTheadNumber);
-        executor.setQueueCapacity(queueSize);
-        executor.setKeepAliveSeconds(keepAliveSeconds);
-        executor.setThreadNamePrefix(threadNamePrefix);
-        executor.setWaitForTasksToCompleteOnShutdown(waitForTasksToCompleteOnShutdown);
-        executor.setRejectedExecutionHandler(
+        ThreadPoolTaskExecutor taskExecutor = new VisibleThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(getExecutor().getCoreThreadNumber());
+        taskExecutor.setMaxPoolSize(getExecutor().getMaxTheadNumber());
+        taskExecutor.setQueueCapacity(getExecutor().getQueueSize());
+        taskExecutor.setKeepAliveSeconds(getExecutor().getKeepAliveSeconds());
+        taskExecutor.setThreadNamePrefix(getExecutor().getThreadNamePrefix());
+        taskExecutor.setWaitForTasksToCompleteOnShutdown(getExecutor().isWaitForTasksToCompleteOnShutdown());
+        taskExecutor.setAwaitTerminationMillis(getExecutor().getAwaitTerminationMillis());
+        taskExecutor.setRejectedExecutionHandler(
             Optional.ofNullable(rejectedHandler).orElse(new ThreadPoolExecutor.CallerRunsPolicy()));
-        executor.setTaskDecorator(Optional.ofNullable(decorator).orElse(new ContextCopyDecorator()));
-        executor.initialize();
-        return executor;
+        taskExecutor.setTaskDecorator(Optional.ofNullable(decorator).orElse(new ContextCopyDecorator(contextCopy)));
+        taskExecutor.initialize();
+        return taskExecutor;
 
+    }
+
+    @Data
+    public static class Executor {
+
+        private int coreThreadNumber;
+
+        private int maxTheadNumber;
+
+        private int queueSize;
+
+        private int keepAliveSeconds;
+
+        private String threadNamePrefix;
+
+        private boolean waitForTasksToCompleteOnShutdown;
+
+        private long awaitTerminationMillis;
+    }
+
+    @Data
+    public static class ContextCopy {
+
+        private Set<String> runtimeExclude;
     }
 }
