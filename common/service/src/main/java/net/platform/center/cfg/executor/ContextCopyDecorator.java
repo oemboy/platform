@@ -2,11 +2,12 @@
 package net.platform.center.cfg.executor;
 
 import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -51,14 +52,12 @@ public class ContextCopyDecorator implements TaskDecorator {
         newContext.setDownSystemRespLocalTime(context.getDownSystemRespLocalTime());
 
         // 复制Regions
-        final Stack<String> regions = context.getRegions();
+        final Deque<String> regions = context.getRegions();
         if (Objects.nonNull(regions)) {
-            final Stack<String> copyStack = new Stack<>();
-            copyStack.addAll(regions);
-            newContext.setRegions(copyStack);
+            newContext.setRegions(new LinkedList<>(regions));
         }
 
-        final Map<String, String> contextMap = context.getContextMap();
+        final Map<String, Object> contextMap = context.getContextMap();
         if (Objects.nonNull(contextMap)) {
             final Set<String> excludeKey = Optional.ofNullable(getContextCopyConfig())
                 .map(VisibleExecutorConfig.ContextCopy::getRuntimeExclude)
