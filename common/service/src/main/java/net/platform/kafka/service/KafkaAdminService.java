@@ -46,7 +46,7 @@ public class KafkaAdminService {
 
     public void createTopic(String topicName, int partition, short replication) {
         NewTopic topic = new NewTopic(topicName, partition, replication);
-        this.createTopic(Collections.singletonList(topic));
+        this.createTopic(List.of(topic));
     }
 
     public void createTopic(List<NewTopic> list) {
