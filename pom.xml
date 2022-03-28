@@ -87,6 +87,13 @@
             </dependency>
             -->
             <dependency>
+                <groupId>org.activiti</groupId>
+                <artifactId>activiti-dependencies</artifactId>
+                <version>${activiti.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
