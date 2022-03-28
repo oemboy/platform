@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.platform.center</groupId>
     <artifactId>center</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
     <name>center</name>
     <packaging>pom</packaging>
     <description>platform project pom</description>
