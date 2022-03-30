@@ -1,7 +1,6 @@
 
 package net.platform.kafka.service;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -38,12 +37,16 @@ import net.platform.center.util.JsonUtil;
  */
 @Slf4j
 public class KafkaAdminService {
+    public static final String INTERRUPTED_EXCEPTION = "InterruptedException: ";
+
+    public static final String EXECUTION_EXCEPTION = "ExecutionException: ";
+
     @Autowired
     private KafkaAdmin kafkaAdmin;
 
     public void createTopic(String topicName, int partition, short replication) {
         NewTopic topic = new NewTopic(topicName, partition, replication);
-        this.createTopic(Arrays.asList(topic));
+        this.createTopic(Collections.singletonList(topic));
     }
 
     public void createTopic(List<NewTopic> list) {
@@ -52,9 +55,10 @@ public class KafkaAdminService {
             result.all().get();
             log.info(JsonUtil.toJsonPrettyString(result));
         } catch (InterruptedException e) {
-            log.error("InterruptedException: ", e);
+            log.error(INTERRUPTED_EXCEPTION, e);
+            Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            log.error("ExecutionException: ", e);
+            log.error(EXECUTION_EXCEPTION, e);
         }
     }
 
@@ -64,9 +68,10 @@ public class KafkaAdminService {
             result.all().get();
             log.info(JsonUtil.toJsonPrettyString(result));
         } catch (InterruptedException e) {
-            log.error("InterruptedException: ", e);
+            log.error(INTERRUPTED_EXCEPTION, e);
+            Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            log.error("ExecutionException: ", e);
+            log.error(EXECUTION_EXCEPTION, e);
         }
     }
 
@@ -79,9 +84,10 @@ public class KafkaAdminService {
             result.all().get();
             log.info(JsonUtil.toJsonPrettyString(result));
         } catch (InterruptedException e) {
-            log.error("InterruptedException: ", e);
+            log.error(INTERRUPTED_EXCEPTION, e);
+            Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            log.error("ExecutionException: ", e);
+            log.error(EXECUTION_EXCEPTION, e);
         }
     }
 
@@ -94,9 +100,10 @@ public class KafkaAdminService {
             log.info("Cluster id: {}, controller: {}", result.clusterId().get(), result.controller().get());
             JsonUtil.toJsonPrettyString(result);
         } catch (InterruptedException e) {
-            log.error("InterruptedException: ", e);
+            log.error(INTERRUPTED_EXCEPTION, e);
+            Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            log.error("ExecutionException: ", e);
+            log.error(EXECUTION_EXCEPTION, e);
         }
     }
 
@@ -110,9 +117,10 @@ public class KafkaAdminService {
             log.info("topicNames in cluster: {}", topics);
             return topics;
         } catch (InterruptedException e) {
-            log.error("InterruptedException: ", e);
+            log.error(INTERRUPTED_EXCEPTION, e);
+            Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            log.error("ExecutionException: ", e);
+            log.error(EXECUTION_EXCEPTION, e);
         }
         return Collections.emptySet();
     }
@@ -123,13 +131,13 @@ public class KafkaAdminService {
             options.includeAuthorizedOperations(includeAuthorized);
 
             DescribeTopicsResult result = client.describeTopics(topicNames, options);
-            // result.all().get().forEach((k, v) -> log.info("{} ===> {}", k, v));
             log.info(JsonUtil.toJsonPrettyString(result.all().get()));
             return result.all().get();
         } catch (InterruptedException e) {
-            log.error("InterruptedException: ", e);
+            log.error(INTERRUPTED_EXCEPTION, e);
+            Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            log.error("ExecutionException: ", e);
+            log.error(EXECUTION_EXCEPTION, e);
         }
         return Collections.emptyMap();
     }
@@ -138,16 +146,15 @@ public class KafkaAdminService {
         getOffSet(Map<TopicPartition, OffsetSpec> topicPartitionOffsets) {
         try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
 
-            // ListOffsetsOptions options = new ListOffsetsOptions();
-            // options.isolationLevel(isolationLevel);
             ListOffsetsResult result = client.listOffsets(topicPartitionOffsets);
 
             result.all().get().forEach((k, v) -> log.info("{} ===> {}", k, v));
             return result.all().get();
         } catch (InterruptedException e) {
-            log.error("InterruptedException: ", e);
+            log.error(INTERRUPTED_EXCEPTION, e);
+            Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            log.error("ExecutionException: ", e);
+            log.error(EXECUTION_EXCEPTION, e);
         }
         return Collections.emptyMap();
     }

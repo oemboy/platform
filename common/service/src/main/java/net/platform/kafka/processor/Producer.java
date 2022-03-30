@@ -18,6 +18,8 @@ import net.platform.kafka.bean.CommonMessage;
  * @Date: 2021/6/4 15:22
  */
 public interface Producer {
+    org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(Producer.class);
+
     default ListenableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message, String topic) {
         throw new UnsupportedOperationException("not support yet");
     }
@@ -46,6 +48,10 @@ public interface Producer {
     default SuccessCallback<SendResult<Object, Object>> successCallBack() {
         return result -> {
             try {
+                if (result == null) {
+                    LOG.warn("result is null");
+                    return;
+                }
                 final ProducerRecord<Object, Object> successRecord = result.getProducerRecord();
                 final String logId = getStringHeader(successRecord, LogUtil.TRANS_IDO);
                 LogUtil.setMdcInfo(logId);
@@ -59,8 +65,8 @@ public interface Producer {
     default void parseSuccessResult(SendResult<Object, Object> result) {
     }
 
-    default String getStringHeader(ProducerRecord<Object, Object> record, String headerName) {
-        final Header header = record.headers().lastHeader(headerName);
+    default String getStringHeader(ProducerRecord<Object, Object> consumerRecord, String headerName) {
+        final Header header = consumerRecord.headers().lastHeader(headerName);
         return (header == null || header.value() == null) ? "" : new String(header.value(), Charset.defaultCharset());
     }
 }

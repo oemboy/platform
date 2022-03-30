@@ -4,6 +4,10 @@
         <Source name="~.*\.groovy"/>
     </Match>
 
+    <Bug pattern="EI_EXPOSE_REP"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+    <Bug pattern="MS_EXPOSE_REP"/>
+
     <!--
     <Match>
         <Class name="com.foobar.ClassNotToBeAnalyzed" />
