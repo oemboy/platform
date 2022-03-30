@@ -77,7 +77,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- activiti7 7.1 jdk11
             <dependency>
                 <groupId>org.activiti</groupId>
                 <artifactId>activiti-dependencies</artifactId>
@@ -85,7 +84,6 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-            -->
             <dependency>
                 <groupId>org.activiti</groupId>
                 <artifactId>activiti-dependencies</artifactId>
