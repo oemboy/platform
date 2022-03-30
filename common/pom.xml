@@ -12,36 +12,10 @@
 
     <name>common</name>
     <description>common of platform project</description>
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
 
     <modules>
         <module>model</module>
         <module>service</module>
     </modules>
-
-
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
-                    <verbose>true</verbose>
-                    <showWarnings>true</showWarnings>
-                    <compilerArgument>-Xlint:unchecked
-                    </compilerArgument>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
-
-
 
 </project>

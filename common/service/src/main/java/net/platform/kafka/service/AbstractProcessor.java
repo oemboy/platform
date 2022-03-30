@@ -18,7 +18,7 @@ public abstract class AbstractProcessor<T extends CommonMessage> {
     @Value("${spring.kafka.consumer.group-id: testGroup}")
     public String groupId;
 
-    public abstract T getMessage(ConsumerRecord<String, String> record);
+    public abstract T getMessage(ConsumerRecord<String, String> consumerRecord);
 
     public void ackMsg(Acknowledgment ack, boolean flag) {
         if (flag) {

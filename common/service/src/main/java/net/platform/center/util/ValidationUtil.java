@@ -1,7 +1,6 @@
 
 package net.platform.center.util;
 
-import java.util.Objects;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -12,19 +11,12 @@ import javax.validation.Validator;
 import org.apache.commons.collections4.CollectionUtils;
 
 public final class ValidationUtil {
-    private static Validator validator;
+    private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     private ValidationUtil() {
     }
 
     public static Validator getValidator() {
-        if (Objects.isNull(validator)) {
-            synchronized (ValidationUtil.class) {
-                if (Objects.isNull(validator)) {
-                    validator = Validation.buildDefaultValidatorFactory().getValidator();
-                }
-            }
-        }
         return validator;
     }
 

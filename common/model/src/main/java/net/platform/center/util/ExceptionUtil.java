@@ -3,7 +3,6 @@ package net.platform.center.util;
 
 import java.io.FileNotFoundException;
 import java.net.BindException;
-import java.security.acl.NotOwnerException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
@@ -35,8 +34,8 @@ public abstract class ExceptionUtil {
      */
     private static final List<Class<? extends Throwable>> SENSITIVE_EXCEPTION =
         Arrays.asList(FileNotFoundException.class, JarException.class, MissingResourceException.class,
-            NotOwnerException.class, ConcurrentModificationException.class, InsufficientResourcesException.class,
-            BindException.class, OutOfMemoryError.class, StackOverflowError.class, SQLException.class);
+            ConcurrentModificationException.class, InsufficientResourcesException.class, BindException.class,
+            OutOfMemoryError.class, StackOverflowError.class, SQLException.class);
 
     private ExceptionUtil() {
     }
@@ -48,7 +47,6 @@ public abstract class ExceptionUtil {
      * <li>{@linkplain FileNotFoundException}：泄露文件系统结构和文件名列举</li>
      * <li>{@linkplain JarException}：泄露文件系统结构</li>
      * <li>{@linkplain MissingResourceException}：资源列举</li>
-     * <li>{@linkplain NotOwnerException}：所有人列举</li>
      * <li>{@linkplain ConcurrentModificationException} ：可能提供线程不安全的代码信息</li>
      * <li>{@linkplain InsufficientResourcesException}：服务器资源不足，可能会造成dos攻击</li>
      * <li>{@linkplain BindException}：当不信任客户端能够选择服务器端口时造成开放端口列举</li>

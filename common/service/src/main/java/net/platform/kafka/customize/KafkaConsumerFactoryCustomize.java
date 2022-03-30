@@ -1,6 +1,7 @@
 
 package net.platform.kafka.customize;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaConsumerFactoryCustomizer;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
@@ -8,9 +9,11 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
  * @Author: bing zi
  * @Date: 2021/6/4 15:22
  */
+
+@Slf4j
 public class KafkaConsumerFactoryCustomize implements DefaultKafkaConsumerFactoryCustomizer {
     @Override
     public void customize(DefaultKafkaConsumerFactory<?, ?> consumerFactory) {
-
+        log.info("KafkaConsumerFactory Customized.");
     }
 }

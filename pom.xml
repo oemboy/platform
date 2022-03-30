@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <spring-cloud.version>2021.0.1</spring-cloud.version>
-        <spring-boot.version>2.6.4</spring-boot.version>
+        <spring-boot.version>2.6.5</spring-boot.version>
 
         <guava.version>31.0.1-jre</guava.version>
         <fastjson.version>1.2.78</fastjson.version>
@@ -38,6 +38,8 @@
         <docker-maven-version>0.36.1</docker-maven-version>
         <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
+
+        <activiti.version>7.1.0-M17</activiti.version>
 
         <origSourceDir>${project.basedir}/src/main/java</origSourceDir>
         <sourceDir>${origSourceDir}</sourceDir>
@@ -78,6 +80,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- activiti7 7.1 jdk11
+            <dependency>
+                <groupId>org.activiti</groupId>
+                <artifactId>activiti-dependencies</artifactId>
+                <version>${activiti.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            -->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -88,13 +99,11 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${commons-collections4.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
@@ -159,28 +168,6 @@
                 <artifactId>spring-boot-starter-log4j2</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
-
-<!--            <dependency>-->
-<!--                <groupId>org.apache.logging.log4j</groupId>-->
-<!--                <artifactId>log4j-jul</artifactId>-->
-<!--                <version>2.17.1</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.logging.log4j</groupId>-->
-<!--                <artifactId>log4j-core</artifactId>-->
-<!--                <version>2.17.1</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.logging.log4j</groupId>-->
-<!--                <artifactId>log4j-slf4j-impl</artifactId>-->
-<!--                <version>2.17.1</version>-->
-<!--            </dependency>-->
-
-<!--            <dependency>-->
-<!--                <groupId>org.apache.logging.log4j</groupId>-->
-<!--                <artifactId>log4j-api</artifactId>-->
-<!--                <version>2.17.1</version>-->
-<!--            </dependency>-->
 
         </dependencies>
     </dependencyManagement>
@@ -330,8 +317,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                     <encoding>UTF-8</encoding>
                     <verbose>true</verbose>
                     <showWarnings>true</showWarnings>
@@ -370,8 +357,9 @@
             </plugin>
             <!-- findbugs插件 ：静态检查代码的错误-->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.6.0.0</version>
                 <configuration>
                     <!-- 设置分析工作的等级，可以为Min、Default和Max -->
                     <effort>Low</effort>
@@ -427,6 +415,13 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>activiti-releases</id>
+            <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-releases</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <id>releases</id>
@@ -439,5 +434,4 @@
             <url>http://10.100.240.69:9081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
 </project>
