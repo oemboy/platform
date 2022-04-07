@@ -38,9 +38,6 @@
         <docker-maven-version>0.36.1</docker-maven-version>
         <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
-
-        <activiti.version>7.1.0-M17</activiti.version>
-
         <origSourceDir>${project.basedir}/src/main/java</origSourceDir>
         <sourceDir>${origSourceDir}</sourceDir>
         <delombokedSourceDir>${project.build.directory}/delombok</delombokedSourceDir>
@@ -414,13 +411,6 @@
 
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>activiti-releases</id>
-            <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-releases</url>
-        </repository>
-    </repositories>
 
     <distributionManagement>
         <repository>
