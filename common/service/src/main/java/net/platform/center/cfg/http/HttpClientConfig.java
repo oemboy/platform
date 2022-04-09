@@ -137,8 +137,30 @@ public class HttpClientConfig {
                 ((StringHttpMessageConverter) converter).setDefaultCharset(StandardCharsets.UTF_8);
             }
         }
+
+        moveLogInterceptor(interceptors);
         restTemplate.getInterceptors().addAll(interceptors);
         return restTemplate;
+    }
+
+    /**
+     * 日志拦截器放到最后
+     * 
+     * @param interceptors 所有的拦截器
+     */
+    private void moveLogInterceptor(List<ClientHttpRequestInterceptor> interceptors) {
+        HttpClientLogInterceptor logInterceptor = null;
+        for (int i = 0; i < interceptors.size() - 1; i++) {
+            if (interceptors.get(i) instanceof HttpClientLogInterceptor) {
+                logInterceptor = (HttpClientLogInterceptor) interceptors.get(i);
+                interceptors.remove(i);
+                break;
+            }
+        }
+
+        if (logInterceptor != null) {
+            interceptors.add(logInterceptor);
+        }
     }
 
     @Bean
