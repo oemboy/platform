@@ -14,6 +14,6 @@ public class CustomKafkaConfiguration implements ImportSelector {
 
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-        return new String[] {};
+        return new String[] {KafkaContainerConfig.class.getName(), KafkaCronConfig.class.getName()};
     }
 }
