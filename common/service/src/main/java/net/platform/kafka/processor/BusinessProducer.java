@@ -1,10 +1,6 @@
 
-package net.platform.kafka.service;
+package net.platform.kafka.processor;
 
-import net.platform.center.util.LogUtil;
-import net.platform.kafka.bean.CommonMessage;
-import net.platform.kafka.processor.Producer;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -13,12 +9,16 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.concurrent.ListenableFuture;
 
+import lombok.extern.slf4j.Slf4j;
+import net.platform.center.util.LogUtil;
+import net.platform.kafka.bean.CommonMessage;
+
 /**
  * @Author: bing zi
  * @Date: 2021/6/4 15:22
  */
 @Slf4j
-public class BusinessProducer implements Producer {
+public class BusinessProducer implements Producer<Object, Object> {
 
     @Autowired
     private KafkaTemplate<Object, Object> kafkaTemplate;

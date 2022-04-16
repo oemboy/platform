@@ -6,8 +6,6 @@ package net.platform.kafka.bean;
  * @Date: 2021/6/4 15:22
  */
 public interface CommonMessage {
-    String getTransIdo();
-
     String getKafkaKey();
 
     String getKafkaMessage();

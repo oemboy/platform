@@ -1,5 +1,5 @@
 
-package net.platform.kafka.processor;
+package net.platform.kafka;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
