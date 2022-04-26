@@ -380,7 +380,8 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
                     <includes>
-                        <include>com/platform/**/*</include>
+                        <include>net/platform/**/*</include>
+                        <include>com/dimpt/**/*</include>
                     </includes>
                 </configuration>
                 <executions>
