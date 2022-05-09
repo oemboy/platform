@@ -5,14 +5,15 @@ import static net.platform.center.exception.ExceptionEnum.ERR_COMMON_VALID;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import lombok.extern.slf4j.Slf4j;
 import net.platform.center.exception.BusinessException;
@@ -27,6 +28,7 @@ public class JsonUtil {
 
     static {
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
     }
 
     private JsonUtil() {
