@@ -1,10 +1,18 @@
 
 package net.platform.center.util;
 
-import lombok.extern.slf4j.Slf4j;
+import java.text.DateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.cache.CacheKey;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
@@ -12,19 +20,13 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
-
-import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Author: bing zi
@@ -117,6 +119,15 @@ public class SqlStatementInterceptor implements Interceptor {
                 }
             }
         }
-        return StringUtils.trim(sql);
+        return formatStr(StringUtils.trim(sql));
+    }
+
+    private static String formatStr(String source) {
+        if (StringUtils.isEmpty(source)) {
+            return source;
+        }
+        return Arrays.stream(source.split(System.lineSeparator()))
+            .filter(StringUtils::isNotBlank)
+            .collect(Collectors.joining(System.lineSeparator()));
     }
 }
