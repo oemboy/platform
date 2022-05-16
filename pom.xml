@@ -420,4 +420,5 @@
             <url>http://10.100.240.69:9081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
 </project>
