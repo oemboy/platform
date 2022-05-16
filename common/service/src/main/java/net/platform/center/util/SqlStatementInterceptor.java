@@ -58,7 +58,7 @@ public class SqlStatementInterceptor implements Interceptor {
                 BoundSql boundSql = mappedStatement.getBoundSql(parameter);
                 Configuration configuration = mappedStatement.getConfiguration();
                 String sql = showSql(configuration, boundSql);
-                log.debug("SqlStatementInterceptor PRINT sql[{}]: {}", sqlId, sql);
+                log.debug("SqlStatementInterceptor PRINT sql[{}]:{}{}", sqlId, System.lineSeparator(), sql);
             }
             returnValue = invocation.proceed();
         } finally {
@@ -126,7 +126,8 @@ public class SqlStatementInterceptor implements Interceptor {
         if (StringUtils.isEmpty(source)) {
             return source;
         }
-        return Arrays.stream(source.split(System.lineSeparator()))
+
+        return Arrays.stream(StringUtils.replace(source, "\r\n", "\n").split("\n"))
             .filter(StringUtils::isNotBlank)
             .collect(Collectors.joining(System.lineSeparator()));
     }
