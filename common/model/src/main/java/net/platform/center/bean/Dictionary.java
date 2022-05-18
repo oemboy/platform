@@ -8,6 +8,7 @@ public class Dictionary implements Serializable {
     private String dictId;
     private String dictName;
     private String groupId;
+    private String groupName;
 
     private int state;
     private String stateDate;
