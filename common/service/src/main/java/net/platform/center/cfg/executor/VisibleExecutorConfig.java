@@ -28,7 +28,7 @@ public class VisibleExecutorConfig {
 
     private Executor executor;
 
-    private ContextCopy contextCopy;
+    private Exclude exclude;
 
     @Bean("visibleExecutor")
     public ThreadPoolTaskExecutor threadPoolExecutor(@Autowired(required = false) TaskDecorator decorator,
@@ -36,7 +36,7 @@ public class VisibleExecutorConfig {
 
         RejectedExecutionHandler rejectedExecutionHandler =
             Optional.ofNullable(rejectedHandler).orElse(new ThreadPoolExecutor.CallerRunsPolicy());
-        TaskDecorator taskDecorator = Optional.ofNullable(decorator).orElse(new ContextCopyDecorator(contextCopy));
+        TaskDecorator taskDecorator = Optional.ofNullable(decorator).orElse(new ContextCopyDecorator(exclude));
 
         return buildThreadPoolTaskExecutor(getExecutor(), rejectedExecutionHandler, taskDecorator);
     }
@@ -76,7 +76,7 @@ public class VisibleExecutorConfig {
     }
 
     @Data
-    public static class ContextCopy {
+    public static class Exclude {
         private Set<String> runtimeExclude;
     }
 }
