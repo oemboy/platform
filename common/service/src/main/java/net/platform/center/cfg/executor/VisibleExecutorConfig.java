@@ -33,20 +33,28 @@ public class VisibleExecutorConfig {
     @Bean("visibleExecutor")
     public ThreadPoolTaskExecutor threadPoolExecutor(@Autowired(required = false) TaskDecorator decorator,
         @Autowired(required = false) RejectedExecutionHandler rejectedHandler) {
+
+        RejectedExecutionHandler rejectedExecutionHandler =
+            Optional.ofNullable(rejectedHandler).orElse(new ThreadPoolExecutor.CallerRunsPolicy());
+        TaskDecorator taskDecorator = Optional.ofNullable(decorator).orElse(new ContextCopyDecorator(contextCopy));
+
+        return buildThreadPoolTaskExecutor(getExecutor(), rejectedExecutionHandler, taskDecorator);
+    }
+
+    public static ThreadPoolTaskExecutor buildThreadPoolTaskExecutor(Executor executorConfig,
+        RejectedExecutionHandler rejectedExecutionHandler, TaskDecorator taskDecorator) {
         ThreadPoolTaskExecutor taskExecutor = new VisibleThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(getExecutor().getCoreThreadNumber());
-        taskExecutor.setMaxPoolSize(getExecutor().getMaxTheadNumber());
-        taskExecutor.setQueueCapacity(getExecutor().getQueueSize());
-        taskExecutor.setKeepAliveSeconds(getExecutor().getKeepAliveSeconds());
-        taskExecutor.setThreadNamePrefix(getExecutor().getThreadNamePrefix());
-        taskExecutor.setWaitForTasksToCompleteOnShutdown(getExecutor().isWaitForTasksToCompleteOnShutdown());
-        taskExecutor.setAwaitTerminationMillis(getExecutor().getAwaitTerminationMillis());
-        taskExecutor.setRejectedExecutionHandler(
-            Optional.ofNullable(rejectedHandler).orElse(new ThreadPoolExecutor.CallerRunsPolicy()));
-        taskExecutor.setTaskDecorator(Optional.ofNullable(decorator).orElse(new ContextCopyDecorator(contextCopy)));
+        taskExecutor.setCorePoolSize(executorConfig.getCoreThreadNumber());
+        taskExecutor.setMaxPoolSize(executorConfig.getMaxTheadNumber());
+        taskExecutor.setQueueCapacity(executorConfig.getQueueSize());
+        taskExecutor.setKeepAliveSeconds(executorConfig.getKeepAliveSeconds());
+        taskExecutor.setThreadNamePrefix(executorConfig.getThreadNamePrefix());
+        taskExecutor.setWaitForTasksToCompleteOnShutdown(executorConfig.isWaitForTasksToCompleteOnShutdown());
+        taskExecutor.setAwaitTerminationMillis(executorConfig.getAwaitTerminationMillis());
+        taskExecutor.setRejectedExecutionHandler(rejectedExecutionHandler);
+        taskExecutor.setTaskDecorator(taskDecorator);
         taskExecutor.initialize();
         return taskExecutor;
-
     }
 
     @Data
@@ -69,7 +77,6 @@ public class VisibleExecutorConfig {
 
     @Data
     public static class ContextCopy {
-
         private Set<String> runtimeExclude;
     }
 }
