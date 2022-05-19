@@ -25,13 +25,13 @@ import net.platform.center.util.RuntimeContext;
 @Data
 public class ContextCopyDecorator implements TaskDecorator {
 
-    private VisibleExecutorConfig.ContextCopy contextCopyConfig;
+    private VisibleExecutorConfig.Exclude excludeConfig;
 
     public ContextCopyDecorator() {
     }
 
-    public ContextCopyDecorator(VisibleExecutorConfig.ContextCopy contextCopyConfig) {
-        this.contextCopyConfig = contextCopyConfig;
+    public ContextCopyDecorator(VisibleExecutorConfig.Exclude excludeConfig) {
+        this.excludeConfig = excludeConfig;
     }
 
     /**
@@ -40,11 +40,7 @@ public class ContextCopyDecorator implements TaskDecorator {
      * @param context 上下文
      * @return 根据配置移除后的上下文
      */
-    protected RuntimeContext runtimeContext(RuntimeContext context) {
-        if (Objects.isNull(context)) {
-            return context;
-        }
-
+    protected RuntimeContext copyRuntimeContext(RuntimeContext context) {
         final RuntimeContext newContext = new RuntimeContext();
         newContext.setReqLocalTime(context.getReqLocalTime());
         newContext.setRespLocalTime(context.getRespLocalTime());
@@ -59,9 +55,10 @@ public class ContextCopyDecorator implements TaskDecorator {
 
         final Map<String, Object> contextMap = context.getContextMap();
         if (Objects.nonNull(contextMap)) {
-            final Set<String> excludeKey = Optional.ofNullable(getContextCopyConfig())
-                .map(VisibleExecutorConfig.ContextCopy::getRuntimeExclude)
+            final Set<String> excludeKey = Optional.ofNullable(getExcludeConfig())
+                .map(VisibleExecutorConfig.Exclude::getRuntimeExclude)
                 .orElse(Collections.emptySet());
+
             newContext.setContextMap(contextMap.entrySet()
                 .stream()
                 .filter(e -> !excludeKey.contains(e.getKey()))
@@ -73,10 +70,10 @@ public class ContextCopyDecorator implements TaskDecorator {
 
     @Override
     public Runnable decorate(Runnable runnable) {
-        String logId = LogUtil.getLogId();
-        String dfxLogName = LogUtil.getDfxLogName();
-        String dfxLog = LogUtil.getDfxLog();
-        RuntimeContext context = runtimeContext(ApplicationContextHolder.getRuntimeContext());
+        final String logId = LogUtil.getLogId();
+        final String dfxLogName = LogUtil.getDfxLogName();
+        final String dfxLog = LogUtil.getDfxLog();
+        final RuntimeContext context = copyRuntimeContext(ApplicationContextHolder.getRuntimeContext());
         return () -> {
             try {
                 LogUtil.setMdcInfo(logId);
