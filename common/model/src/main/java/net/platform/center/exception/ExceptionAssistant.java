@@ -24,8 +24,11 @@ import net.platform.center.util.LogUtil;
  * @date 2021/09/03
  */
 @Slf4j
-public abstract class ExceptionAssistant {
+public final class ExceptionAssistant {
     private static final String APPLICATION_JSON_UTF8 = "application/json;charset=utf-8";
+
+    private ExceptionAssistant() {
+    }
 
     /**
      * 提供处理完成异常信息后直接回写调用方能力. <br/>

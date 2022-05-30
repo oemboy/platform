@@ -16,7 +16,12 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-public abstract class SpelUtil {
+/**
+ * @Author: jack
+ * @Date: 2021/6/4 15:22
+ */
+
+public final class SpelUtil {
     private static final SpelExpressionParser PARSER = new SpelExpressionParser();
 
     private static final Map<String, Expression> CACHE = new LRUMap<>(1024);

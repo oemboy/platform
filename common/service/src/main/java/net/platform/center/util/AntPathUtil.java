@@ -10,7 +10,12 @@ import java.util.Collection;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.util.AntPathMatcher;
 
-public abstract class AntPathUtil {
+/**
+ * @Author: jack
+ * @Date: 2021/6/4 15:22
+ */
+
+public final class AntPathUtil {
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
 
     private AntPathUtil() {

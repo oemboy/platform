@@ -5,14 +5,20 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-import net.platform.center.exception.BusinessException;
-import net.platform.center.exception.ExceptionCode;
 import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-public abstract class Assert {
+import net.platform.center.exception.BusinessException;
+import net.platform.center.exception.ExceptionCode;
+
+/**
+ * @Author: jack
+ * @Date: 2021/6/4 15:22
+ */
+
+public final class Assert {
     private Assert() {
     }
 

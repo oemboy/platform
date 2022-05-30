@@ -10,6 +10,11 @@ import javax.validation.Validator;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+/**
+ * @Author: jack
+ * @Date: 2021/6/4 15:22
+ */
+
 public final class ValidationUtil {
     private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 

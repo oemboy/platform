@@ -17,7 +17,7 @@ import org.springframework.web.util.UrlPathHelper;
  *
  * @author Jack
  */
-public abstract class WebUtil {
+public final class WebUtil {
 
     private WebUtil() {
     }
