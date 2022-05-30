@@ -412,12 +412,12 @@
         <repository>
             <id>releases</id>
             <name>Releases</name>
-            <url>http://10.100.240.69:9081/repository/maven-releases/</url>
+            <url>http://10.10.46.63:8091/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>Snapshot</name>
-            <url>http://10.100.240.69:9081/repository/maven-snapshots/</url>
+            <url>http://10.10.46.63:8091/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 

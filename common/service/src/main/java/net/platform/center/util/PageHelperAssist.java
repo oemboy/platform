@@ -17,11 +17,16 @@ import net.platform.center.bean.PageInfo;
 
 /**
  * 分页辅助类
+ * 
+ * @Author: jack
+ * @Date: 2021/6/4 15:22
  */
-public interface PageHelperAssist {
+public final class PageHelperAssist {
+    private PageHelperAssist() {
+    }
 
-    static <P extends CommonPageInfoRsp, Q extends CommonPageInfoReq, T> P page(Q req, Function<Q, List<T>> dataGet,
-        Function<List<T>, P> rspFunc, boolean countFlag) {
+    public static <P extends CommonPageInfoRsp, Q extends CommonPageInfoReq, T> P page(Q req,
+        Function<Q, List<T>> dataGet, Function<List<T>, P> rspFunc, boolean countFlag) {
         final PageInfo pageInfo = Optional.ofNullable(req).map(Q::getPageInfo).orElse(null);
         if (Objects.isNull(pageInfo)) {
             throw new InvalidParameterException("CommonPageInfoReq::getPageInfo is null.");
@@ -42,8 +47,8 @@ public interface PageHelperAssist {
         return rsp;
     }
 
-    static <P extends CommonPageInfoRsp, Q extends CommonPageInfoReq, T> P page(Q req, Function<Q, List<T>> dataGet,
-        Function<List<T>, P> rspFunc) {
+    public static <P extends CommonPageInfoRsp, Q extends CommonPageInfoReq, T> P page(Q req,
+        Function<Q, List<T>> dataGet, Function<List<T>, P> rspFunc) {
         return page(req, dataGet, rspFunc, true);
     }
 }

@@ -46,9 +46,9 @@ public class KafkaCronConfig {
             });
     }
 
-    // 0 0 12,22 * * ?
     @Scheduled(cron = "${spring.kafka.cron.stopCron}")
     public void stopListener() {
+        // 0 0 12,22 * * ?
         final Collection<MessageListenerContainer> listenerContainers =
             kafkaListenerEndpointRegistry.getListenerContainers();
         listenerContainers.stream()

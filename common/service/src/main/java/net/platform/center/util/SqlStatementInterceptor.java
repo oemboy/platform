@@ -40,9 +40,12 @@ import lombok.extern.slf4j.Slf4j;
     @Signature(type = Executor.class, method = "query",
         args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),})
 public class SqlStatementInterceptor implements Interceptor {
+    public static final long TIME_THRESHOLD = 1000L;
+
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object returnValue;
+
         final Object[] args = invocation.getArgs();
 
         MappedStatement mappedStatement = (MappedStatement) args[0];
@@ -63,9 +66,8 @@ public class SqlStatementInterceptor implements Interceptor {
             returnValue = invocation.proceed();
         } finally {
             long time = System.currentTimeMillis() - start;
-            if (time < 1000L) {
+            if (time < TIME_THRESHOLD) {
                 log.debug(costTime(sqlId, time));
-
             } else {
                 log.warn(costTime(sqlId, time));
             }

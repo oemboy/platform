@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 1.0.0
  */
 @Slf4j
-public abstract class ExceptionUtil {
+public final class ExceptionUtil {
 
     /**
      * 敏感异常信息集合， 用于判断异常是否为敏感异常

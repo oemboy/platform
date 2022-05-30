@@ -4,6 +4,11 @@ package net.platform.center.bean;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * @Author: bing zi
+ * @Date: 2021/6/4 15:22
+ */
+
 @Setter
 public class PageInfo {
     @Getter
