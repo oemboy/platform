@@ -407,18 +407,16 @@
 
         </plugins>
     </build>
-
     <distributionManagement>
         <repository>
             <id>releases</id>
             <name>Releases</name>
-            <url>http://10.10.46.63:8091/repository/maven-releases/</url>
+            <url>${releases.url}</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>Snapshot</name>
-            <url>http://10.10.46.63:8091/repository/maven-snapshots/</url>
+            <url>${snapshots.url}</url>
         </snapshotRepository>
     </distributionManagement>
-
 </project>
