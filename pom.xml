@@ -38,6 +38,8 @@
         <sourceDir>${origSourceDir}</sourceDir>
         <delombokedSourceDir>${project.build.directory}/delombok</delombokedSourceDir>
         <jacoco.reportPath>${project.basedir}/target/jacoco-ut.exec</jacoco.reportPath>
+        <sonar.plugin.version>3.8.0.2131</sonar.plugin.version>
+        <sonar.test.exclusions>**/test/*</sonar.test.exclusions>
     </properties>
 
     <modules>
@@ -109,7 +111,6 @@
                 <artifactId>joor-java-8</artifactId>
                 <version>${joor.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.jooq</groupId>
                 <artifactId>jool-java-8</artifactId>
@@ -146,14 +147,11 @@
                 <artifactId>apm-toolkit-log4j-2.x</artifactId>
                 <version>${skywalking.version}</version>
             </dependency>
-
-
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-log4j2</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -298,6 +296,11 @@
                     <artifactId>jasypt-maven-plugin</artifactId>
                     <version>${jasypt.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar.plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -403,6 +406,10 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
