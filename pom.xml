@@ -8,7 +8,6 @@
     <name>center</name>
     <packaging>pom</packaging>
     <description>platform project pom</description>
-
     <properties>
         <java.version>11</java.version>
         <maven.compiler.source>11</maven.compiler.source>
@@ -29,11 +28,8 @@
         <groovy.version>3.0.9</groovy.version>
         <jool.version>0.9.14</jool.version>
         <joor.version>0.9.13</joor.version>
-
-
         <jasypt.version>3.0.4</jasypt.version>
         <skywalking.version>8.8.0</skywalking.version>
-
         <pagehelper.version>5.2.1</pagehelper.version>
         <docker-maven-version>0.36.1</docker-maven-version>
         <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
@@ -41,6 +37,7 @@
         <origSourceDir>${project.basedir}/src/main/java</origSourceDir>
         <sourceDir>${origSourceDir}</sourceDir>
         <delombokedSourceDir>${project.build.directory}/delombok</delombokedSourceDir>
+        <jacoco.reportPath>${project.basedir}/target/jacoco-ut.exec</jacoco.reportPath>
     </properties>
 
     <modules>
@@ -401,10 +398,12 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <dataFile>${jacoco.reportPath}</dataFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
     <distributionManagement>

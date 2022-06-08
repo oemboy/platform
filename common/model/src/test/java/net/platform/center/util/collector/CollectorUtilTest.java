@@ -39,11 +39,11 @@ class CollectorUtilTest {
 
     @Test
     void priorNCollector() {
-        PriorNCollector<String> priorNCollector = new PriorNCollector<>(2, Comparator.comparing(Function.identity()));
+        PriorCollector<String> priorCollector = new PriorCollector<>(2, Comparator.comparing(Function.identity()));
 
-        Assertions.assertEquals("dc", String.join("", buildList().stream().collect(priorNCollector.maxN())));
+        Assertions.assertEquals("dc", String.join("", buildList().stream().collect(priorCollector.maxN())));
 
-        Assertions.assertEquals("ab", String.join("", buildList().stream().collect(priorNCollector.minN())));
+        Assertions.assertEquals("ab", String.join("", buildList().stream().collect(priorCollector.minN())));
     }
 
     private List<String> buildList() {

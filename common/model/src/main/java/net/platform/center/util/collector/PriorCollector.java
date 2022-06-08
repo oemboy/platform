@@ -15,7 +15,7 @@ import java.util.stream.Collector;
  * @Author: bing zi
  * @Date: 2021/8/3 14:27
  */
-public class PriorNCollector<T> {
+public class PriorCollector<T> {
     final int limit;
 
     final Comparator<? super T> comparator;
@@ -28,7 +28,7 @@ public class PriorNCollector<T> {
 
     final Function<PriorityQueue<T>, List<T>> finisher;
 
-    public PriorNCollector(int limit, Comparator<? super T> comparator) {
+    public PriorCollector(int limit, Comparator<? super T> comparator) {
         this.limit = limit;
         this.comparator = comparator;
         this.reverse = comparator.reversed();

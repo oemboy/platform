@@ -30,4 +30,12 @@ public abstract class AbstractConsumer<T extends CommonMessage> {
         final Header header = consumerRecord.headers().lastHeader(headerName);
         return (header == null || header.value() == null) ? "" : new String(header.value(), Charset.defaultCharset());
     }
+
+    /**
+     * 获取消息实体
+     *
+     * @param consumerRecord kafka msg
+     * @return 业务实体
+     */
+    public abstract T getMessage(ConsumerRecord<String, String> consumerRecord);
 }

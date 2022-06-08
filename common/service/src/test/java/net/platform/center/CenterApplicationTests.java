@@ -13,7 +13,7 @@ class CenterApplicationTests {
 
     @Test
     void contextLoads() {
-        assertEquals(24, UUIDGenerator.get24UUID().length());
+        assertEquals(24, UUIDGenerator.getLength24().length());
     }
 
 }
