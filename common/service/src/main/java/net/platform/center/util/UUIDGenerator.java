@@ -11,37 +11,37 @@ public class UUIDGenerator {
     private UUIDGenerator() {
     }
 
-    public static String get8UUID() {
+    public static String getLength8() {
         UUID id = UUID.randomUUID();
         String[] ids = id.toString().split("-");
         return ids[0];
     }
 
-    public static String get12UUID() {
+    public static String getLength12() {
         UUID id = UUID.randomUUID();
         String[] ids = id.toString().split("-");
         return ids[0] + ids[1];
     }
 
-    public static String get16UUID() {
+    public static String getLength16() {
         UUID id = UUID.randomUUID();
         String[] ids = id.toString().split("-");
         return ids[0] + ids[1] + ids[2];
     }
 
-    public static String get20UUID() {
+    public static String getLength20() {
         UUID id = UUID.randomUUID();
         String[] ids = id.toString().split("-");
         return ids[0] + ids[1] + ids[2] + ids[3];
     }
 
-    public static String get24UUID() {
+    public static String getLength24() {
         UUID id = UUID.randomUUID();
         String[] ids = id.toString().split("-");
         return ids[0] + ids[1] + ids[4];
     }
 
-    public static String get32UUID() {
+    public static String getLength32() {
         UUID id = UUID.randomUUID();
         String[] ids = id.toString().split("-");
         return ids[0] + ids[1] + ids[2] + ids[3] + ids[4];
