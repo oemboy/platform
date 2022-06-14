@@ -323,7 +323,6 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
-                    <!--<excludes>${delombokedSourceDir}/*.java</excludes>-->
                 </configuration>
                 <dependencies>
                     <dependency>
