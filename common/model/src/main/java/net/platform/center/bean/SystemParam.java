@@ -15,7 +15,7 @@ public class SystemParam {
     /**
      * 参数表id
      */
-    private Long paramId;
+    private String paramId;
 
     /**
      * 参数名称
