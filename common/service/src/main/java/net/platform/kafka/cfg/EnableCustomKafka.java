@@ -14,6 +14,6 @@ import org.springframework.context.annotation.Import;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Import({CustomKafkaConfiguration.class})
+@Import({KafkaCustomConfiguration.class})
 public @interface EnableCustomKafka {
 }
