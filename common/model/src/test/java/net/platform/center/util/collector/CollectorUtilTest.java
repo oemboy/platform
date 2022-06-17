@@ -2,12 +2,14 @@
 package net.platform.center.util.collector;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
@@ -55,4 +57,14 @@ class CollectorUtilTest {
         return list;
     }
 
+    @Test
+    void countEggs() {
+        List<Integer> collect = IntStream.iterate(0, i -> i + 1)
+            .filter(num -> num % 3 == 1 && num % 5 == 2 && num % 7 == 6)
+            .limit(10)
+            .peek(System.out::println)
+            .boxed()
+            .collect(toList());
+        assertEquals(10, collect.size());
+    }
 }

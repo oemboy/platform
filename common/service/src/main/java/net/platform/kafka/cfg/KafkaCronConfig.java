@@ -1,7 +1,11 @@
 
 package net.platform.kafka.cfg;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collection;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
@@ -9,9 +13,7 @@ import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import java.util.Collection;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Author: bing zi
@@ -25,7 +27,7 @@ public class KafkaCronConfig {
     @Resource
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
-    @Scheduled(cron = "${spring.kafka.cron.startCron}")
+    @Scheduled(cron = "${system.kafka.cron.startCron}")
     public void startListener() {
         final Collection<MessageListenerContainer> listenerContainers =
             kafkaListenerEndpointRegistry.getListenerContainers();
@@ -46,7 +48,7 @@ public class KafkaCronConfig {
             });
     }
 
-    @Scheduled(cron = "${spring.kafka.cron.stopCron}")
+    @Scheduled(cron = "${system.kafka.cron.stopCron}")
     public void stopListener() {
         // 0 0 12,22 * * ?
         final Collection<MessageListenerContainer> listenerContainers =
