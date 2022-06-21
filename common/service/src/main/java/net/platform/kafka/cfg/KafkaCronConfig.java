@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @EnableScheduling
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(prefix = "spring.kafka.cron", name = "enableCron", havingValue = "true")
+@ConditionalOnProperty(prefix = "system.kafka.cron", name = "enableCron", havingValue = "true")
 public class KafkaCronConfig {
     @Resource
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
