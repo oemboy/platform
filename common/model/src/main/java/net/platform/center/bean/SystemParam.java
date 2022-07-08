@@ -41,4 +41,9 @@ public class SystemParam {
      * 状态 0 失效 1 生效
      */
     private Integer state;
+
+    /**
+     * 区域id
+     */
+    private Integer areaId = 999;
 }
