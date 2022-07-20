@@ -14,6 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 public class LogUtil {
     public static final String TRANS_IDO = "TRANSIDO";
 
+    public static final String DEBUG_TYPE = "DebugType";
+
+    public static final String USE_DFX_LOG = "useDfxLog";
+
     private static final String DFX_LOG_NAME = "DFXLogName";
 
     private static final String DFX_LOG = "DFXLog";
@@ -39,12 +43,12 @@ public class LogUtil {
         }
     }
 
-    public static void setMdcDfxInfo(String dfxLogName, String dfxLog) {
+    public static void setMdcDfxInfo(String dfxLogName, String dfxLogLevel) {
         if (StringUtils.isNotBlank(dfxLogName)) {
             MDC.put(DFX_LOG_NAME, dfxLogName);
         }
-        if (StringUtils.isNotBlank(dfxLog)) {
-            MDC.put(DFX_LOG, dfxLog);
+        if (StringUtils.isNotBlank(dfxLogLevel)) {
+            MDC.put(DFX_LOG, dfxLogLevel);
         }
     }
 
