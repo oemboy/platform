@@ -3,11 +3,13 @@ package net.platform.kafka.processor;
 
 import java.nio.charset.Charset;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.springframework.kafka.support.Acknowledgment;
 
 import lombok.extern.slf4j.Slf4j;
+import net.platform.center.util.LogUtil;
 import net.platform.kafka.bean.CommonMessage;
 
 /**
@@ -24,6 +26,17 @@ public abstract class AbstractConsumer<T extends CommonMessage> {
         } else {
             ack.nack(0, SLEEP_TIME);
         }
+    }
+
+    public void setConsumerMdcInfo(ConsumerRecord<String, String> consumerRecord, String dfxLogLevel) {
+        final String dfxLogFileName = getConsumerHeader(consumerRecord, LogUtil.USE_DFX_LOG);
+        if (StringUtils.isNotBlank(dfxLogFileName)) {
+            LogUtil.setMdcDfxInfo(dfxLogFileName, dfxLogLevel);
+        }
+    }
+
+    public void setConsumerMdcInfo(ConsumerRecord<String, String> consumerRecord) {
+        setConsumerMdcInfo(consumerRecord, LogUtil.INFO_TYPE);
     }
 
     public String getConsumerHeader(ConsumerRecord<?, ?> consumerRecord, String headerName) {

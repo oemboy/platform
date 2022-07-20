@@ -16,6 +16,8 @@ public class LogUtil {
 
     public static final String DEBUG_TYPE = "DebugType";
 
+    public static final String INFO_TYPE = "InfoType";
+
     public static final String USE_DFX_LOG = "useDfxLog";
 
     private static final String DFX_LOG_NAME = "DFXLogName";
