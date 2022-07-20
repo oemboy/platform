@@ -72,12 +72,12 @@ public class ContextCopyDecorator implements TaskDecorator {
     public Runnable decorate(Runnable runnable) {
         final String logId = LogUtil.getLogId();
         final String dfxLogName = LogUtil.getDfxLogName();
-        final String dfxLog = LogUtil.getDfxLog();
+        final String dfxLogLevel = LogUtil.getDfxLog();
         final RuntimeContext context = copyRuntimeContext(ApplicationContextHolder.getRuntimeContext());
         return () -> {
             try {
                 LogUtil.setMdcInfo(logId);
-                LogUtil.setMdcDfxInfo(dfxLogName, dfxLog);
+                LogUtil.setMdcDfxInfo(dfxLogName, dfxLogLevel);
                 ApplicationContextHolder.setRuntimeContext(context);
                 runnable.run();
             } finally {

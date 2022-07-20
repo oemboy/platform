@@ -47,6 +47,10 @@ public class BusinessProducer implements Producer<Object, Object> {
             builder.setHeader(LogUtil.TRANS_IDO, transIdo);
         }
 
+        if (LogUtil.getDfxLogName() != null) {
+            builder.setHeader(LogUtil.USE_DFX_LOG, LogUtil.getDfxLogName());
+        }
+
         if (partition >= 0) {
             builder.setHeader(KafkaHeaders.PARTITION_ID, partition);
         }
