@@ -3,7 +3,6 @@ package net.platform.kafka.processor;
 
 import java.nio.charset.Charset;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.springframework.kafka.support.Acknowledgment;
@@ -29,10 +28,8 @@ public abstract class AbstractConsumer<T extends CommonMessage> {
     }
 
     public void setConsumerMdcInfo(ConsumerRecord<String, String> consumerRecord, String dfxLogLevel) {
-        final String dfxLogFileName = getConsumerHeader(consumerRecord, LogUtil.USE_DFX_LOG);
-        if (StringUtils.isNotBlank(dfxLogFileName)) {
-            LogUtil.setMdcDfxInfo(dfxLogFileName, dfxLogLevel);
-        }
+        LogUtil.setMdcInfo(getConsumerHeader(consumerRecord, LogUtil.TRANS_IDO));
+        LogUtil.setMdcDfxInfo(getConsumerHeader(consumerRecord, LogUtil.USE_DFX_LOG), dfxLogLevel);
     }
 
     public void setConsumerMdcInfo(ConsumerRecord<String, String> consumerRecord) {
