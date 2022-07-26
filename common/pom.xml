@@ -15,6 +15,7 @@
 
     <modules>
         <module>model</module>
+        <module>groovy</module>
         <module>service</module>
     </modules>
 
