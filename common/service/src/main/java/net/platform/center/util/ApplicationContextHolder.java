@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ArrayUtils.contains;
 
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -14,10 +15,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
 
+import lombok.extern.slf4j.Slf4j;
+import net.platform.center.bean.DfxSqlBean;
+
 /**
  * @Author: bing zi
  * @Date: 2021/6/4 15:22
  */
+
+@Slf4j
 public class ApplicationContextHolder implements ApplicationContextAware {
     private static final ThreadLocal<RuntimeContext> RUNTIME_CONTEXT_HOLDER = new ThreadLocal<>();
 
@@ -44,6 +50,14 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 
     public static void setContextMapValue(@NonNull String key, Object value) {
         getRuntimeContext().getContextMap().put(key, value);
+    }
+
+    public static Map<DfxSqlBean, String> getDfxSqlMap() {
+        return getRuntimeContext().getDfxSqlBeanMap();
+    }
+
+    public static void setDfxSql(@NonNull DfxSqlBean dfxSqlBean) {
+        getRuntimeContext().getDfxSqlBeanMap().put(dfxSqlBean, dfxSqlBean.getSqlId());
     }
 
     public static void removeContextMapEntry(@NonNull String key) {
@@ -102,6 +116,15 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 
         return Arrays.stream(profiles).anyMatch(profile -> contains(activeProfiles, profile))
             || Arrays.stream(profiles).anyMatch(profile -> contains(defaultProfiles, profile));
+    }
+
+    public static void dfxFunction(String function) {
+        try {
+            DfxFunction dfxFunction = ApplicationContextHolder.getBean(function, DfxFunction.class);
+            dfxFunction.dfxFunction();
+        } catch (Exception e) {
+            log.warn("DfxFunction error: {}", e.getMessage());
+        }
     }
 
 }

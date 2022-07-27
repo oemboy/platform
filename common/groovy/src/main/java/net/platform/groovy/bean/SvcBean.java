@@ -5,6 +5,10 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * @Author: bing zi
+ * @Date: 2022/6/4 15:22
+ */
 @Data
 public class SvcBean implements Serializable {
     @JsonProperty

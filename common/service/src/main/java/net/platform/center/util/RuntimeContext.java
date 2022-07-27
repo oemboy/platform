@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.Data;
+import net.platform.center.bean.DfxSqlBean;
 
 /**
  * @Author: bing zi
@@ -25,6 +26,8 @@ public class RuntimeContext {
     private LocalDateTime downSystemRespLocalTime;
 
     private Map<String, Object> contextMap = new ConcurrentHashMap<>();
+
+    private Map<DfxSqlBean, String> dfxSqlBeanMap = new ConcurrentHashMap<>(16);
 
     private Deque<String> regions = new LinkedList<>();
 

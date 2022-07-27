@@ -22,9 +22,6 @@ public class PlatformGroovyShell extends GroovyShell {
     static {
         ImportCustomizer icz = new ImportCustomizer();
         icz.addImports(IMPORT_CLASS);
-        // for (String[] method : STATIC_IMPORT_METHODS) {
-        // icz.addStaticImport(method[0], method[1]);
-        // }
         DEFAULT_COMPILER_CONFIG.addCompilationCustomizers(icz);
         DEFAULT_COMPILER_CONFIG.setSourceEncoding(StandardCharsets.UTF_8.name());
 

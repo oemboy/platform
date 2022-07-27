@@ -4,10 +4,14 @@ package net.platform.center.util;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +31,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import lombok.extern.slf4j.Slf4j;
+import net.platform.center.bean.DfxSqlBean;
 
 /**
  * @Author: bing zi
@@ -41,6 +46,12 @@ import lombok.extern.slf4j.Slf4j;
         args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),})
 public class SqlStatementInterceptor implements Interceptor {
     public static final long TIME_THRESHOLD = 1000L;
+
+    public static final String SKIP_SQL_KEY = "skipSql";
+
+    public static final String DEFAULT_SKIP_SQL = "recordDfxSql";
+
+    private final Set<String> skipSqlSet = new HashSet<>(8);
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -57,11 +68,12 @@ public class SqlStatementInterceptor implements Interceptor {
                 parameter = args[1];
             }
 
-            if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled() && skipSqlSet.stream().noneMatch(sqlId::contains)) {
                 BoundSql boundSql = mappedStatement.getBoundSql(parameter);
                 Configuration configuration = mappedStatement.getConfiguration();
                 String sql = showSql(configuration, boundSql);
                 log.debug("SqlStatementInterceptor PRINT sql[{}]:{}{}", sqlId, System.lineSeparator(), sql);
+                ApplicationContextHolder.setDfxSql(new DfxSqlBean(sqlId, boundSql.getSql(), sql));
             }
             returnValue = invocation.proceed();
         } finally {
@@ -72,7 +84,6 @@ public class SqlStatementInterceptor implements Interceptor {
                 log.warn(costTime(sqlId, time));
             }
         }
-
         return returnValue;
     }
 
@@ -121,16 +132,21 @@ public class SqlStatementInterceptor implements Interceptor {
                 }
             }
         }
-        return formatStr(StringUtils.trim(sql));
+        return DfxFunction.formatStr(StringUtils.trim(sql));
     }
 
-    private static String formatStr(String source) {
-        if (StringUtils.isEmpty(source)) {
-            return source;
-        }
-
-        return Arrays.stream(StringUtils.replace(source, "\r\n", "\n").split("\n"))
-            .filter(StringUtils::isNotBlank)
-            .collect(Collectors.joining(System.lineSeparator()));
+    @Override
+    public void setProperties(Properties properties) {
+        Optional.ofNullable(properties.getProperty(SKIP_SQL_KEY))
+            .map(skips -> skips.split(","))
+            .map(Arrays::stream)
+            .ifPresent(this::toSqlSet);
     }
+
+    private void toSqlSet(Stream<String> item) {
+        item.filter(StringUtils::isNotBlank).forEach(skipSqlSet::add);
+        log.debug("skipSqlSet: {}", skipSqlSet);
+        skipSqlSet.add(DEFAULT_SKIP_SQL);
+    }
+
 }
