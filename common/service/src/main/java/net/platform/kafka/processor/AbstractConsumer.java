@@ -8,6 +8,7 @@ import org.apache.kafka.common.header.Header;
 import org.springframework.kafka.support.Acknowledgment;
 
 import lombok.extern.slf4j.Slf4j;
+import net.platform.center.util.ApplicationContextHolder;
 import net.platform.center.util.LogUtil;
 import net.platform.kafka.bean.CommonMessage;
 
@@ -25,6 +26,8 @@ public abstract class AbstractConsumer<T extends CommonMessage> {
         } else {
             ack.nack(0, SLEEP_TIME);
         }
+        ApplicationContextHolder.clearRuntimeContext();
+        LogUtil.clearMdcInfo();
     }
 
     public void setConsumerMdcInfo(ConsumerRecord<String, String> consumerRecord, String dfxLogLevel) {

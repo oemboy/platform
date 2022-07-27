@@ -1,12 +1,16 @@
+
 package net.platform.groovy.bean;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
-import java.io.Serializable;
-
+/**
+ * @Author: bing zi
+ * @Date: 2022/6/4 15:22
+ */
 @Data
-public class AppSvcApiDef implements Serializable {
+public class AppSvcApiDef {
     @JsonProperty
     private String apiFlow0;
 
