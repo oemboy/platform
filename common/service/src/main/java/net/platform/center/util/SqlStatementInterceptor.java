@@ -68,12 +68,14 @@ public class SqlStatementInterceptor implements Interceptor {
                 parameter = args[1];
             }
 
-            if (log.isDebugEnabled() && skipSqlSet.stream().noneMatch(sqlId::contains)) {
+            if (log.isDebugEnabled() && !sqlId.contains(DEFAULT_SKIP_SQL)) {
                 BoundSql boundSql = mappedStatement.getBoundSql(parameter);
                 Configuration configuration = mappedStatement.getConfiguration();
                 String sql = showSql(configuration, boundSql);
                 log.debug("SqlStatementInterceptor PRINT sql[{}]:{}{}", sqlId, System.lineSeparator(), sql);
-                ApplicationContextHolder.setDfxSql(new DfxSqlBean(sqlId, boundSql.getSql(), sql));
+                if (skipSqlSet.stream().noneMatch(sqlId::contains)) {
+                    ApplicationContextHolder.setDfxSql(new DfxSqlBean(sqlId, boundSql.getSql(), sql));
+                }
             }
             returnValue = invocation.proceed();
         } finally {
