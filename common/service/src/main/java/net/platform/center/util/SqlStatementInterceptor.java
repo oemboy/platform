@@ -141,12 +141,12 @@ public class SqlStatementInterceptor implements Interceptor {
             .map(skips -> skips.split(","))
             .map(Arrays::stream)
             .ifPresent(this::toSqlSet);
+        skipSqlSet.add(DEFAULT_SKIP_SQL);
     }
 
     private void toSqlSet(Stream<String> item) {
         item.filter(StringUtils::isNotBlank).forEach(skipSqlSet::add);
         log.debug("skipSqlSet: {}", skipSqlSet);
-        skipSqlSet.add(DEFAULT_SKIP_SQL);
     }
 
 }
