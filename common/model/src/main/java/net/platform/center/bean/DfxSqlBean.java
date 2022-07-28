@@ -26,7 +26,7 @@ public class DfxSqlBean {
     public DfxSqlBean(String sqlId, String boundSql, String sql) {
         this.sqlId = sqlId;
         this.sqlIndex = getSha256(sqlId, boundSql);
-        this.sql = sql;
+        this.sql = DfxFunction.formatStr(sql);
     }
 
     private String getSha256(String sqlId, String boundSql) {
