@@ -42,7 +42,7 @@ public class DfxSqlBean {
         if (StringUtils.isBlank(boundSql)) {
             return boundSql;
         }
-        return DfxFunction.formatStr(boundSql.replaceAll("[\\s]]+", " "));
+        return DfxFunction.formatStr(boundSql.replaceAll("[\\s]]+", " ")).toUpperCase();
     }
 
     public String getSqlId() {
