@@ -23,6 +23,8 @@ public class DfxSqlBean {
 
     String sql;
 
+    long timeSpan;
+
     public DfxSqlBean(String sqlId, String boundSql, String sql) {
         this.sqlId = sqlId;
         this.sqlIndex = getSha256(sqlId, boundSql);
@@ -55,6 +57,14 @@ public class DfxSqlBean {
 
     public String getSql() {
         return sql;
+    }
+
+    public long getTimeSpan() {
+        return timeSpan;
+    }
+
+    public void setTimeSpan(long timeSpan) {
+        this.timeSpan = timeSpan;
     }
 
     @Override

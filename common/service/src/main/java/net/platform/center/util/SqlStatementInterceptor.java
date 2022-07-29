@@ -49,9 +49,13 @@ public class SqlStatementInterceptor implements Interceptor {
 
     public static final String SKIP_SQL_KEY = "skipSql";
 
+    public static final String TIME_LIMIT_KEY = "dfxSqlTimeLimit";
+
     public static final String DEFAULT_SKIP_SQL = "recordDfxSql";
 
     private final Set<String> skipSqlSet = new HashSet<>(8);
+
+    private long timeLimit = TIME_THRESHOLD;
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -62,31 +66,47 @@ public class SqlStatementInterceptor implements Interceptor {
         MappedStatement mappedStatement = (MappedStatement) args[0];
         String sqlId = mappedStatement.getId();
         long start = System.currentTimeMillis();
-        try {
-            Object parameter = null;
-            if (args.length > 1) {
-                parameter = args[1];
-            }
 
-            if (log.isDebugEnabled() && !sqlId.contains(DEFAULT_SKIP_SQL)) {
-                BoundSql boundSql = mappedStatement.getBoundSql(parameter);
-                Configuration configuration = mappedStatement.getConfiguration();
-                String sql = showSql(configuration, boundSql);
-                log.debug("SqlStatementInterceptor PRINT sql[{}]:{}{}", sqlId, System.lineSeparator(), sql);
-                if (skipSqlSet.stream().noneMatch(sqlId::contains)) {
-                    ApplicationContextHolder.setDfxSql(new DfxSqlBean(sqlId, boundSql.getSql(), sql));
-                }
+        Object parameter = null;
+        if (args.length > 1) {
+            parameter = args[1];
+        }
+        DfxSqlBean dfxSqlBean = null;
+        try {
+            if (log.isDebugEnabled()) {
+                dfxSqlBean = showDfxSql(mappedStatement, sqlId, parameter);
             }
             returnValue = invocation.proceed();
         } finally {
             long time = System.currentTimeMillis() - start;
-            if (time < TIME_THRESHOLD) {
+            if (time < timeLimit) {
                 log.debug(costTime(sqlId, time));
             } else {
                 log.warn(costTime(sqlId, time));
+                if (dfxSqlBean == null) {
+                    dfxSqlBean = showDfxSql(mappedStatement, sqlId, parameter);
+                }
+            }
+            if (dfxSqlBean != null) {
+                dfxSqlBean.setTimeSpan(time);
             }
         }
         return returnValue;
+    }
+
+    private DfxSqlBean showDfxSql(MappedStatement mappedStatement, String sqlId, Object parameter) {
+        DfxSqlBean dfxSqlBean = null;
+        if (!sqlId.contains(DEFAULT_SKIP_SQL)) {
+            BoundSql boundSql = mappedStatement.getBoundSql(parameter);
+            Configuration configuration = mappedStatement.getConfiguration();
+            String sql = showSql(configuration, boundSql);
+            log.debug("SqlStatementInterceptor PRINT sql[{}]:{}{}", sqlId, System.lineSeparator(), sql);
+            if (skipSqlSet.stream().noneMatch(sqlId::contains)) {
+                dfxSqlBean = new DfxSqlBean(sqlId, boundSql.getSql(), sql);
+                ApplicationContextHolder.setDfxSql(dfxSqlBean);
+            }
+        }
+        return dfxSqlBean;
     }
 
     public String costTime(String sqlId, long time) {
@@ -114,36 +134,54 @@ public class SqlStatementInterceptor implements Interceptor {
         Object parameter = boundSql.getParameterObject();
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         String sql = boundSql.getSql().replaceAll("[\\s]]+", " ");
-        if (CollectionUtils.isNotEmpty(parameterMappings) && parameter != null) {
-            TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-            if (typeHandlerRegistry.hasTypeHandler(parameter.getClass())) {
-                sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(parameter)));
-            } else {
-                MetaObject metaObject = configuration.newMetaObject(parameter);
-                for (ParameterMapping parameterMapping : parameterMappings) {
-                    String name = parameterMapping.getProperty();
-                    if (metaObject.hasGetter(name)) {
-                        Object obj = metaObject.getValue(name);
-                        sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
-                    } else if (boundSql.hasAdditionalParameter(name)) {
-                        Object obj = boundSql.getAdditionalParameter(name);
-                        sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
-                    } else {
-                        sql = sql.replaceFirst("\\?", "缺失");
+        try {
+            if (CollectionUtils.isNotEmpty(parameterMappings) && parameter != null) {
+                TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+                if (typeHandlerRegistry.hasTypeHandler(parameter.getClass())) {
+                    sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(parameter)));
+                } else {
+                    MetaObject metaObject = configuration.newMetaObject(parameter);
+                    for (ParameterMapping parameterMapping : parameterMappings) {
+                        String name = parameterMapping.getProperty();
+                        if (metaObject.hasGetter(name)) {
+                            Object obj = metaObject.getValue(name);
+                            sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
+                        } else if (boundSql.hasAdditionalParameter(name)) {
+                            Object obj = boundSql.getAdditionalParameter(name);
+                            sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
+                        } else {
+                            sql = sql.replaceFirst("\\?", "缺失");
+                        }
                     }
                 }
             }
+            return DfxFunction.formatStr(StringUtils.trim(sql));
+        } catch (Exception e) {
+            log.warn("fill sql parameter failure.");
+            return sql;
         }
-        return DfxFunction.formatStr(StringUtils.trim(sql));
     }
 
     @Override
     public void setProperties(Properties properties) {
+        timeLimit = getTimeLimit(properties.getProperty(TIME_LIMIT_KEY));
         Optional.ofNullable(properties.getProperty(SKIP_SQL_KEY))
             .map(skips -> skips.split(","))
             .map(Arrays::stream)
             .ifPresent(this::toSqlSet);
         skipSqlSet.add(DEFAULT_SKIP_SQL);
+    }
+
+    private long getTimeLimit(String property) {
+        if (StringUtils.isBlank(property)) {
+            return TIME_THRESHOLD;
+        }
+        try {
+            return Long.parseLong(property);
+        } catch (Exception e) {
+            log.warn("mybatis config error: {}", property);
+            return TIME_THRESHOLD;
+        }
     }
 
     private void toSqlSet(Stream<String> item) {
