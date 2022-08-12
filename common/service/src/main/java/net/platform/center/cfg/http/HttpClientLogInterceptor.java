@@ -1,6 +1,8 @@
 
 package net.platform.center.cfg.http;
 
+import static net.platform.center.util.AntPathUtil.decodeUrl;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,8 +20,6 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.StreamUtils;
 
 import lombok.extern.slf4j.Slf4j;
-
-import static net.platform.center.util.AntPathUtil.decodeUrl;
 
 /**
  * @Author: bing zi
@@ -70,10 +70,9 @@ public class HttpClientLogInterceptor implements ClientHttpRequestInterceptor {
                     log.debug("Response body: {}", StreamUtils.copyToString(stream, responseCharset(headers)));
 
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error(e.getMessage());
             }
-
             log.debug("===========================response end===========================");
         }
     }
@@ -82,10 +81,19 @@ public class HttpClientLogInterceptor implements ClientHttpRequestInterceptor {
         if (Objects.isNull(headers)) {
             return StandardCharsets.UTF_8;
         }
-        List<Charset> acceptCharset = headers.getAcceptCharset();
-        if (CollectionUtils.isEmpty(acceptCharset)) {
+
+        try {
+            List<Charset> acceptCharset = headers.getAcceptCharset();
+            if (CollectionUtils.isEmpty(acceptCharset)) {
+                return StandardCharsets.UTF_8;
+            }
+            return acceptCharset.stream()
+                .filter(StandardCharsets.UTF_8::equals)
+                .findFirst()
+                .orElse(acceptCharset.get(0));
+        } catch (Exception e) {
+            log.warn("responseCharset:", e);
             return StandardCharsets.UTF_8;
         }
-        return acceptCharset.stream().filter(StandardCharsets.UTF_8::equals).findFirst().orElse(acceptCharset.get(0));
     }
 }
