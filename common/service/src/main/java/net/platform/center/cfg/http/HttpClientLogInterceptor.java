@@ -8,12 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
@@ -78,22 +77,14 @@ public class HttpClientLogInterceptor implements ClientHttpRequestInterceptor {
     }
 
     private Charset responseCharset(HttpHeaders headers) {
-        if (Objects.isNull(headers)) {
-            return StandardCharsets.UTF_8;
-        }
-
         try {
-            List<Charset> acceptCharset = headers.getAcceptCharset();
-            if (CollectionUtils.isEmpty(acceptCharset)) {
-                return StandardCharsets.UTF_8;
-            }
-            return acceptCharset.stream()
-                .filter(StandardCharsets.UTF_8::equals)
-                .findFirst()
-                .orElse(acceptCharset.get(0));
+            return Optional.ofNullable(headers)
+                .map(HttpHeaders::getContentType)
+                .map(MediaType::getCharset)
+                .orElse(StandardCharsets.UTF_8);
         } catch (Exception e) {
             log.warn("responseCharset:", e);
-            return StandardCharsets.UTF_8;
         }
+        return StandardCharsets.UTF_8;
     }
 }
