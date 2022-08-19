@@ -30,7 +30,7 @@
         <joor.version>0.9.13</joor.version>
         <jasypt.version>3.0.4</jasypt.version>
         <skywalking.version>8.8.0</skywalking.version>
-        <pagehelper.version>5.2.1</pagehelper.version>
+        <pagehelper.version>5.3.1</pagehelper.version>
         <docker-maven-version>0.36.1</docker-maven-version>
         <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
@@ -40,6 +40,10 @@
         <jacoco.reportPath>${project.basedir}/target/jacoco-ut.exec</jacoco.reportPath>
         <sonar.plugin.version>3.8.0.2131</sonar.plugin.version>
         <sonar.test.exclusions>**/test/*</sonar.test.exclusions>
+        <dom4j.version>2.1.3</dom4j.version>
+        <redisson.version>3.16.8</redisson.version>
+        <springfox.version>3.0.0</springfox.version>
+        <docker-maven-version>0.40.0</docker-maven-version>
     </properties>
 
     <modules>
@@ -102,7 +106,11 @@
                 <artifactId>jool-java-8</artifactId>
                 <version>${jool.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${springfox.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-typehandlers-jsr310</artifactId>
@@ -198,6 +206,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-jdbc</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
