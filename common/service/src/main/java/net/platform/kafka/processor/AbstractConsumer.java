@@ -2,6 +2,7 @@
 package net.platform.kafka.processor;
 
 import java.nio.charset.Charset;
+import java.time.Duration;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
@@ -18,7 +19,7 @@ import net.platform.kafka.bean.CommonMessage;
  */
 @Slf4j
 public abstract class AbstractConsumer<T extends CommonMessage> {
-    public static final long SLEEP_TIME = 20;
+    public static final Duration SLEEP_TIME = Duration.ofMillis(20L);
 
     public void ackMsg(Acknowledgment ack, boolean flag) {
         if (flag) {
