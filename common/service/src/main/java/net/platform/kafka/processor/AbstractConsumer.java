@@ -3,7 +3,10 @@ package net.platform.kafka.processor;
 
 import java.nio.charset.Charset;
 import java.time.Duration;
+import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.springframework.kafka.support.Acknowledgment;
@@ -31,13 +34,21 @@ public abstract class AbstractConsumer<T extends CommonMessage> {
         LogUtil.clearMdcInfo();
     }
 
-    public void setConsumerMdcInfo(ConsumerRecord<String, String> consumerRecord, String dfxLogLevel) {
-        LogUtil.setMdcInfo(getConsumerHeader(consumerRecord, LogUtil.TRANS_IDO));
-        LogUtil.setMdcDfxInfo(getConsumerHeader(consumerRecord, LogUtil.USE_DFX_LOG), dfxLogLevel);
+    public void setConsumerMdcInfo(Map<String, String> contextMap) {
+        setConsumerMdcInfo(contextMap, LogUtil.INFO_TYPE);
     }
 
-    public void setConsumerMdcInfo(ConsumerRecord<String, String> consumerRecord) {
-        setConsumerMdcInfo(consumerRecord, LogUtil.INFO_TYPE);
+    public void setConsumerMdcInfo(Map<String, String> contextMap, String dfxLogLevel) {
+        String transIdo = MapUtils.emptyIfNull(contextMap).get(LogUtil.TRANS_IDO);
+        if (StringUtils.isNotEmpty(transIdo)) {
+            LogUtil.setMdcInfo(transIdo);
+        }
+
+        String dfxLog = MapUtils.emptyIfNull(contextMap).get(LogUtil.USE_DFX_LOG);
+        if (StringUtils.isNotEmpty(dfxLog)) {
+            LogUtil.setMdcDfxInfo(dfxLog, dfxLogLevel);
+
+        }
     }
 
     public String getConsumerHeader(ConsumerRecord<?, ?> consumerRecord, String headerName) {
