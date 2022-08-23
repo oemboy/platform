@@ -67,9 +67,7 @@ public interface Producer<K, V> {
      * @param failedRecord 失败记录
      */
     default void parseFailedResult(ProducerRecord<K, V> failedRecord) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(failedRecord.toString());
-        }
+        LOG.error("FailureCallback error: {}", failedRecord);
     }
 
     /**

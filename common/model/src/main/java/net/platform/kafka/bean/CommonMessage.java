@@ -1,6 +1,8 @@
 
 package net.platform.kafka.bean;
 
+import java.util.Map;
+
 /**
  * @Author: bing zi
  * @Date: 2021/6/4 15:22
@@ -47,4 +49,11 @@ public interface CommonMessage {
      * @param state 状态
      */
     void setMsgState(String state);
+
+    /**
+     * 获取消息上下文
+     *
+     * @return contextMap
+     */
+    Map<String, String> getContextMap();
 }

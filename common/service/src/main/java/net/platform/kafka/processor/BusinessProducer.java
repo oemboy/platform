@@ -25,14 +25,31 @@ public class BusinessProducer implements Producer<Object, Object> {
 
     @Override
     public ListenableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message, String topic) {
-        log.debug("key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
+        setContextMap(message);
+        if (log.isDebugEnabled()) {
+            log.debug("key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
+        }
         return sendWithPartition(message.getKafkaKey(), message.getKafkaMessage(), topic, -1);
+    }
+
+    private static void setContextMap(CommonMessage message) {
+        String transIdo = LogUtil.getLogId();
+        if (StringUtils.isNotEmpty(transIdo)) {
+            message.getContextMap().put(LogUtil.TRANS_IDO, transIdo);
+        }
+
+        if (LogUtil.getDfxLogName() != null) {
+            message.getContextMap().put(LogUtil.USE_DFX_LOG, LogUtil.getDfxLogName());
+        }
     }
 
     @Override
     public ListenableFuture<SendResult<Object, Object>> writeMessageByPartition(CommonMessage message, String topic,
         int partition) {
-        log.debug("key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
+        setContextMap(message);
+        if (log.isDebugEnabled()) {
+            log.debug("key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
+        }
         return sendWithPartition(message.getKafkaKey(), message.getKafkaMessage(), topic, partition);
     }
 
@@ -41,15 +58,6 @@ public class BusinessProducer implements Producer<Object, Object> {
         final MessageBuilder<String> builder = MessageBuilder.withPayload(payload)
             .setHeader(KafkaHeaders.MESSAGE_KEY, key)
             .setHeader(KafkaHeaders.TOPIC, topic);
-
-        String transIdo = LogUtil.getLogId();
-        if (StringUtils.isNotEmpty(transIdo)) {
-            builder.setHeader(LogUtil.TRANS_IDO, transIdo);
-        }
-
-        if (LogUtil.getDfxLogName() != null) {
-            builder.setHeader(LogUtil.USE_DFX_LOG, LogUtil.getDfxLogName());
-        }
 
         if (partition >= 0) {
             builder.setHeader(KafkaHeaders.PARTITION_ID, partition);
