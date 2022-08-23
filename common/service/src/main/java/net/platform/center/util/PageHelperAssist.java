@@ -49,6 +49,6 @@ public final class PageHelperAssist {
 
     public static <P extends CommonPageInfoRsp, Q extends CommonPageInfoReq, T> P page(Q req,
         Function<Q, List<T>> dataGet, Function<List<T>, P> rspFunc) {
-        return page(req, dataGet, rspFunc, true);
+        return page(req, dataGet, rspFunc, req.getPageInfo().isCount());
     }
 }

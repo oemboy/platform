@@ -27,6 +27,9 @@ public class PageInfo {
     @Getter
     private String sortField;
 
+    @Getter
+    private boolean isCount = true;
+
     public Integer getCurrentPageNum() {
         return currentPageNum == null ? Integer.valueOf(1) : currentPageNum;
     }
@@ -36,7 +39,7 @@ public class PageInfo {
     }
 
     public static Integer getPageSize(PageInfo pageInfo) {
-        return pageInfo == null || pageInfo.getPageSize() == null || pageInfo.getPageSize() <= 0 ? Integer.valueOf(10)
+        return pageInfo == null || pageInfo.getPageSize() == null || pageInfo.getPageSize() < 0 ? Integer.valueOf(10)
             : pageInfo.getPageSize();
     }
 
