@@ -10,6 +10,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.ConsumerGroupDescription;
+import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.admin.DescribeClusterOptions;
@@ -123,6 +125,30 @@ public class KafkaAdminService {
             log.error(EXECUTION_EXCEPTION, e);
         }
         return Collections.emptySet();
+    }
+
+    public Collection<ConsumerGroupListing> listConsumerGroups() {
+        try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+            return client.listConsumerGroups().all().get();
+        } catch (InterruptedException e) {
+            log.error(INTERRUPTED_EXCEPTION, e);
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            log.error(EXECUTION_EXCEPTION, e);
+        }
+        return Collections.emptySet();
+    }
+
+    public Map<String, ConsumerGroupDescription> describeConsumerGroups(Collection<String> groupIds) {
+        try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+            return client.describeConsumerGroups(groupIds).all().get();
+        } catch (InterruptedException e) {
+            log.error(INTERRUPTED_EXCEPTION, e);
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            log.error(EXECUTION_EXCEPTION, e);
+        }
+        return Collections.emptyMap();
     }
 
     public Map<String, TopicDescription> describeTopics(Collection<String> topicNames, Boolean includeAuthorized) {
