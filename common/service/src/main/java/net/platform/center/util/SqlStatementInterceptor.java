@@ -78,20 +78,25 @@ public class SqlStatementInterceptor implements Interceptor {
             }
             returnValue = invocation.proceed();
         } finally {
-            long time = System.currentTimeMillis() - start;
-            if (time < timeLimit) {
-                log.debug(costTime(sqlId, time));
-            } else {
-                log.warn(costTime(sqlId, time));
-                if (dfxSqlBean == null) {
-                    dfxSqlBean = showDfxSql(mappedStatement, sqlId, parameter);
-                }
-            }
-            if (dfxSqlBean != null) {
-                dfxSqlBean.setTimeSpan(time);
-            }
+            setDfxSqlContext(mappedStatement, sqlId, start, parameter, dfxSqlBean);
         }
         return returnValue;
+    }
+
+    private void setDfxSqlContext(MappedStatement mappedStatement, String sqlId, long start, Object parameter,
+        DfxSqlBean dfxSqlBean) {
+        long time = System.currentTimeMillis() - start;
+        if (time < timeLimit) {
+            log.debug(costTime(sqlId, time));
+        } else {
+            log.warn(costTime(sqlId, time));
+            if (dfxSqlBean == null) {
+                dfxSqlBean = showDfxSql(mappedStatement, sqlId, parameter);
+            }
+        }
+        if (dfxSqlBean != null) {
+            dfxSqlBean.setTimeSpan(time);
+        }
     }
 
     private DfxSqlBean showDfxSql(MappedStatement mappedStatement, String sqlId, Object parameter) {

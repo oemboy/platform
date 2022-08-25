@@ -32,8 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ResourceArgumentsProvider implements ArgumentsProvider, AnnotationConsumer<ResourceFile> {
     private final BiFunction<Class<?>, String, InputStream> inputStreamBiFunction;
 
-    private ResourceFile annotation;
-
     private String[] resources;
 
     private Charset charset;
@@ -50,11 +48,10 @@ public class ResourceArgumentsProvider implements ArgumentsProvider, AnnotationC
 
     @Override
     public void accept(ResourceFile resourceFile) {
-        this.annotation = resourceFile;
-        this.resources = annotation.resources();
-        this.clazz = annotation.type();
+        this.resources = resourceFile.resources();
+        this.clazz = resourceFile.type();
         try {
-            this.charset = Charset.forName(annotation.encoding());
+            this.charset = Charset.forName(resourceFile.encoding());
         } catch (UnsupportedCharsetException e) {
             throw new JUnitException("the charset is illegal!");
         }
