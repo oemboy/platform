@@ -17,7 +17,6 @@ import net.platform.center.util.DigestUtil;
 
 @Slf4j
 public class DfxSqlBean {
-    public static final String TOPIC = "TOPIC_DFX_SQL";
     String sqlId;
 
     String sqlIndex;
