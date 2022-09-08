@@ -3,6 +3,7 @@ package net.platform.kafka.service;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,12 +20,14 @@ import org.apache.kafka.clients.admin.DescribeClusterResult;
 import org.apache.kafka.clients.admin.DescribeConfigsResult;
 import org.apache.kafka.clients.admin.DescribeTopicsOptions;
 import org.apache.kafka.clients.admin.DescribeTopicsResult;
+import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsResult;
 import org.apache.kafka.clients.admin.ListOffsetsResult;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,5 +186,40 @@ public class KafkaAdminService {
             log.error(EXECUTION_EXCEPTION, e);
         }
         return Collections.emptyMap();
+    }
+
+    public Long getTopicLag(String topic, String groupId) {
+        try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+            ListConsumerGroupOffsetsResult result = client.listConsumerGroupOffsets(groupId);
+
+            KafkaFuture<KafkaFuture<Long>> future =
+                result.partitionsToOffsetAndMetadata().thenApply(topicPartitionOffsetMap -> {
+                    Map<TopicPartition, OffsetSpec> topicPartitionOffsets = new HashMap<>(32);
+                    topicPartitionOffsetMap.keySet()
+                        .stream()
+                        .filter(item -> topic.equals(item.topic()))
+                        .forEach(item -> topicPartitionOffsets.put(item, OffsetSpec.latest()));
+
+                    return client.listOffsets(topicPartitionOffsets)
+                        .all()
+                        .thenApply((r) -> r.entrySet().stream().map(entry -> {
+                            long offset = topicPartitionOffsetMap.get(entry.getKey()).offset();
+                            log.debug("consumer offset: {}", offset);
+                            long endOffset = entry.getValue().offset();
+                            log.debug("endOffset: {}", endOffset);
+                            long lag = endOffset - offset;
+                            log.info("topic:{}, lag:{}", entry.getKey().topic(), lag);
+                            return lag;
+                        }).reduce(0L, Long::sum));
+                });
+
+            return future.get().get();
+        } catch (InterruptedException e) {
+            log.error(INTERRUPTED_EXCEPTION, e);
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            log.error(EXECUTION_EXCEPTION, e);
+        }
+        return -1L;
     }
 }
