@@ -202,7 +202,7 @@ public class KafkaAdminService {
 
                     return client.listOffsets(topicPartitionOffsets)
                         .all()
-                        .thenApply((r) -> r.entrySet().stream().map(entry -> {
+                        .thenApply(r -> r.entrySet().stream().map(entry -> {
                             long offset = topicPartitionOffsetMap.get(entry.getKey()).offset();
                             log.debug("consumer offset: {}", offset);
                             long endOffset = entry.getValue().offset();
