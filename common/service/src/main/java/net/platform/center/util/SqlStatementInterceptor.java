@@ -29,6 +29,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.slf4j.MDC;
 
 import lombok.extern.slf4j.Slf4j;
 import net.platform.center.bean.DfxSqlBean;
@@ -90,7 +91,7 @@ public class SqlStatementInterceptor implements Interceptor {
             log.debug(costTime(sqlId, time));
         } else {
             log.warn(costTime(sqlId, time));
-            if (dfxSqlBean == null) {
+            if (dfxSqlBean == null && MDC.get(LogUtil.DFX_LOG_NAME) != null) {
                 dfxSqlBean = showDfxSql(mappedStatement, sqlId, parameter);
             }
         }

@@ -20,9 +20,9 @@ public class LogUtil {
 
     public static final String USE_DFX_LOG = "useDfxLog";
 
-    private static final String DFX_LOG_NAME = "DFXLogName";
+    public static final String DFX_LOG_NAME = "DFXLogName";
 
-    private static final String DFX_LOG = "DFXLog";
+    public static final String DFX_LOG = "DFXLog";
 
     private LogUtil() {
     }
