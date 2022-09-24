@@ -390,11 +390,13 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!--suppress UnresolvedMavenProperty -->
-                    <argLine>-Dfile.encoding=UTF-8 ${surefireArgLine}</argLine>
+                    <argLine>-Xms512m -Xmx3072m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8 ${surefireArgLine}</argLine>
+                    <useSystemClassLoader>false</useSystemClassLoader>
                     <systemProperties>
                         <jacoco-agent.destfile>${jacoco.reportPath}</jacoco-agent.destfile>
                     </systemProperties>
                     <forkMode>once</forkMode>
+                    <!--<reuseForks>true</reuseForks>-->
                     <parallel>classes</parallel>
                     <threadCount>4</threadCount>
                     <!--<includes>-->
