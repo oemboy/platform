@@ -43,6 +43,7 @@
         <redisson.version>3.16.8</redisson.version>
         <springfox.version>3.0.0</springfox.version>
         <docker-maven-version>0.40.0</docker-maven-version>
+        <jacoco.version>0.8.8</jacoco.version>
     </properties>
 
     <modules>
@@ -253,6 +254,13 @@
             <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <version>${jacoco.version}</version>
+            <classifier>runtime</classifier>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -338,7 +346,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.7</version>
+                    <version>0.8.8</version>
                 </plugin>
                 <plugin>
                     <groupId>io.fabric8</groupId>
@@ -375,6 +383,23 @@
                     <showWarnings>true</showWarnings>
                     <compilerArgument>-Xlint:unchecked
                     </compilerArgument>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <argLine>-Dfile.encoding=UTF-8 ${surefireArgLine}</argLine>
+                    <systemProperties>
+                        <jacoco-agent.destfile>${jacoco.reportPath}</jacoco-agent.destfile>
+                    </systemProperties>
+                    <forkMode>once</forkMode>
+                    <parallel>classes</parallel>
+                    <threadCount>4</threadCount>
+                    <!--<includes>-->
+                    <!--    <include>**/*Test.java</include>-->
+                    <!--</includes>-->
                 </configuration>
             </plugin>
             <plugin>
@@ -431,12 +456,10 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
             </plugin>
-
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -452,13 +475,19 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <propertyName>surefireArgLine</propertyName>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>post-test</id>
                         <phase>prepare-package</phase>
                         <goals>
-                            <goal>report-aggregate</goal>
+                            <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <dataFile>${jacoco.reportPath}</dataFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
