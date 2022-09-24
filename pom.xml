@@ -36,7 +36,7 @@
         <origSourceDir>${project.basedir}/src/main/java</origSourceDir>
         <sourceDir>${origSourceDir}</sourceDir>
         <delombokedSourceDir>${project.build.directory}/delombok</delombokedSourceDir>
-        <jacoco.reportPath>${project.basedir}/target/jacoco-ut.exec</jacoco.reportPath>
+        <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
         <sonar.plugin.version>3.8.0.2131</sonar.plugin.version>
         <sonar.test.exclusions>**/test/*</sonar.test.exclusions>
         <dom4j.version>2.1.3</dom4j.version>
