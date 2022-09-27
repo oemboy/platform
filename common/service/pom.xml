@@ -154,7 +154,6 @@
             <artifactId>pagehelper</artifactId>
             <optional>true</optional>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -172,6 +171,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>
