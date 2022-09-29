@@ -36,20 +36,11 @@
                     <!--<reuseForks>true</reuseForks>-->
                     <parallel>classes</parallel>
                     <threadCount>4</threadCount>
-                    <!--<includes>-->
-                    <!--    <include>**/*Test.java</include>-->
-                    <!--</includes>-->
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/bean/**</exclude>
-                    </excludes>
-                </configuration>
                 <executions>
                     <execution>
                         <id>pre-test</id>
@@ -75,4 +66,50 @@
         </plugins>
     </build>
 
+
+    <profiles>
+        <profile>
+            <id>lombokcode</id>
+            <properties>
+                <sourceDir>${delombokedSourceDir}</sourceDir>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- lombok 代码打包 -->
+                    <plugin>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok-maven-plugin</artifactId>
+                        <version>1.18.20.0</version>
+                        <executions>
+                            <execution>
+                                <id>delombok</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>delombok</goal>
+                                </goals>
+                                <configuration>
+                                    <addOutputDirectory>false</addOutputDirectory>
+                                    <sourceDirectory>${origSourceDir}</sourceDirectory>
+                                    <outputDirectory>${delombokedSourceDir}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
