@@ -6,10 +6,9 @@
     <parent>
         <groupId>net.platform.center</groupId>
         <artifactId>center</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>0.0.3-jdk11-SNAPSHOT</version>
     </parent>
     <artifactId>common-report</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
     <name>common-report</name>
     <description>order-report</description>
     <packaging>pom</packaging>
