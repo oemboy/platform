@@ -125,12 +125,12 @@
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>
-            <artifactId>joor-java-8</artifactId>
+            <artifactId>joor</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>
-            <artifactId>jool-java-8</artifactId>
+            <artifactId>jool</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>

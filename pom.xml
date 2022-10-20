@@ -26,7 +26,7 @@
         <mybatis.spring.boot.version>2.2.2</mybatis.spring.boot.version>
         <groovy.version>3.0.12</groovy.version>
         <jool.version>0.9.14</jool.version>
-        <joor.version>0.9.13</joor.version>
+        <joor.version>0.9.14</joor.version>
         <jasypt.version>3.0.4</jasypt.version>
         <skywalking.version>8.8.0</skywalking.version>
         <pagehelper.version>5.3.1</pagehelper.version>
@@ -99,12 +99,12 @@
             </dependency>
             <dependency>
                 <groupId>org.jooq</groupId>
-                <artifactId>joor-java-8</artifactId>
+                <artifactId>joor</artifactId>
                 <version>${joor.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jooq</groupId>
-                <artifactId>jool-java-8</artifactId>
+                <artifactId>jool</artifactId>
                 <version>${jool.version}</version>
             </dependency>
             <dependency>
