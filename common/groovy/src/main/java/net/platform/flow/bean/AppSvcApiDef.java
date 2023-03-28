@@ -1,5 +1,5 @@
 
-package net.platform.groovy.bean;
+package net.platform.flow.bean;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
