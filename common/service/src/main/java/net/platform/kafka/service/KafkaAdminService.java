@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
+
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
@@ -30,7 +32,6 @@ import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaAdmin;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class KafkaAdminService {
 
     public static final String EXECUTION_EXCEPTION = "ExecutionException: ";
 
-    @Autowired
+    @Resource
     private KafkaAdmin kafkaAdmin;
 
     public void createTopic(String topicName, int partition, short replication) {
@@ -160,8 +161,8 @@ public class KafkaAdminService {
             options.includeAuthorizedOperations(includeAuthorized);
 
             DescribeTopicsResult result = client.describeTopics(topicNames, options);
-            log.info(JsonUtil.toJsonPrettyString(result.all().get()));
-            return result.all().get();
+            log.info(JsonUtil.toJsonPrettyString(result.allTopicNames().get()));
+            return result.allTopicNames().get();
         } catch (InterruptedException e) {
             log.error(INTERRUPTED_EXCEPTION, e);
             Thread.currentThread().interrupt();
@@ -191,7 +192,6 @@ public class KafkaAdminService {
     public Long getTopicLag(String topic, String groupId) {
         try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
             ListConsumerGroupOffsetsResult result = client.listConsumerGroupOffsets(groupId);
-
             KafkaFuture<KafkaFuture<Long>> future =
                 result.partitionsToOffsetAndMetadata().thenApply(topicPartitionOffsetMap -> {
                     Map<TopicPartition, OffsetSpec> topicPartitionOffsets = new HashMap<>(32);

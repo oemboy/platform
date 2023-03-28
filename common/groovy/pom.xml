@@ -14,6 +14,11 @@
         <dependency>
             <groupId>net.platform.center</groupId>
             <artifactId>common-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.platform.center</groupId>
+            <artifactId>common-model</artifactId>
             <type>test-jar</type>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -100,14 +105,14 @@
                         <phase>compile</phase>
                         <configuration>
                             <target>
-                                <mkdir dir="${project.basedir}/src/main/resources/groovy/"/>
+                                <mkdir dir="${project.basedir}/src/main/resources/flow/"/>
                                 <taskdef name="groovyc"
                                          classname="org.codehaus.groovy.ant.Groovyc">
                                     <classpath refid="maven.compile.classpath"/>
                                 </taskdef>
                                 <mkdir dir="${project.build.outputDirectory}"/>
                                 <groovyc destdir="${project.build.outputDirectory}"
-                                         srcdir="${project.basedir}/src/main/resources/groovy/" listfiles="true">
+                                         srcdir="${project.basedir}/src/main/resources/flow/" listfiles="true">
                                     <classpath refid="maven.compile.classpath"/>
                                 </groovyc>
                             </target>
@@ -121,14 +126,14 @@
                         <phase>test-compile</phase>
                         <configuration>
                             <target>
-                                <mkdir dir="${project.basedir}/src/test/resources/groovy/"/>
+                                <mkdir dir="${project.basedir}/src/test/resources/flow/"/>
                                 <taskdef name="groovyc"
                                          classname="org.codehaus.groovy.ant.Groovyc">
                                     <classpath refid="maven.test.classpath"/>
                                 </taskdef>
                                 <mkdir dir="${project.build.testOutputDirectory}"/>
                                 <groovyc destdir="${project.build.testOutputDirectory}"
-                                         srcdir="${project.basedir}/src/test/resources/groovy/" listfiles="true">
+                                         srcdir="${project.basedir}/src/test/resources/flow/" listfiles="true">
                                     <classpath refid="maven.test.classpath"/>
                                 </groovyc>
                             </target>
