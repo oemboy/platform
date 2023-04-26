@@ -13,16 +13,15 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>2.7.10</spring-boot.version>
+        <spring-boot.version>2.7.11</spring-boot.version>
         <guava.version>31.1-jre</guava.version>
-        <fastjson.version>1.2.83</fastjson.version>
         <jackson.version>2.13.3</jackson.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-net.version>3.9.0</commons-net.version>
         <mybatis.spring.boot.version>2.2.2</mybatis.spring.boot.version>
-        <groovy.version>3.0.16</groovy.version>
+        <groovy.version>3.0.17</groovy.version>
         <jool.version>0.9.14</jool.version>
         <joor.version>0.9.14</joor.version>
         <jasypt.version>3.0.4</jasypt.version>

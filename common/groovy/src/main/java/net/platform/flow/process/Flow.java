@@ -22,6 +22,7 @@ import net.platform.flow.step.Step;
  * @Date: 2021/6/4 15:22
  */
 @Slf4j
+@SuppressWarnings("UnstableApiUsage")
 public class Flow {
     private static final StartStep START_STEP = StartStep.SIMPLE;
 
@@ -34,7 +35,7 @@ public class Flow {
     }
 
     public static class Builder {
-        private MutableValueGraph<Step, EdgeMatcher> mutableValueGraph;
+        private final MutableValueGraph<Step, EdgeMatcher> mutableValueGraph;
 
         public Builder() {
             mutableValueGraph = ValueGraphBuilder.directed().allowsSelfLoops(false).build();
