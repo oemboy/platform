@@ -64,7 +64,7 @@ public final class ExceptionAssistant {
         response.setStatus(status);
         response.setContentType(contentType);
         response.getOutputStream()
-            .write(JsonUtil.getObjectMapper().writeValueAsString(entity.getBody()).getBytes(StandardCharsets.UTF_8));
+            .write(StringUtils.trimToEmpty(JsonUtil.toJsonString(entity.getBody())).getBytes(StandardCharsets.UTF_8));
     }
 
     /**

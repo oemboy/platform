@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -35,8 +36,12 @@ public class JsonUtil {
 
     }
 
-    public static ObjectMapper getObjectMapper() {
-        return OBJECT_MAPPER;
+    public static void configure(DeserializationFeature feature) {
+        OBJECT_MAPPER.configure(feature, false);
+    }
+
+    public static void registerModule(Module module) {
+        OBJECT_MAPPER.registerModule(module);
     }
 
     public static String toJsonString(Object obj) {
