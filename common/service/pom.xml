@@ -96,7 +96,6 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-            <version>3.0.8</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -107,6 +106,11 @@
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jool</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -126,9 +130,9 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.2.1</version>
         </dependency>
     </dependencies>
 

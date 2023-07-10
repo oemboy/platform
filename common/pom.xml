@@ -74,7 +74,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!--suppress UnresolvedMavenProperty -->
-                    <argLine>-Xms512m -Xmx3072m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8 ${surefireArgLine}</argLine>
+                    <argLine>-Xms512m -Xmx3072m -Dfile.encoding=UTF-8 ${surefireArgLine}</argLine>
                     <systemProperties>
                         <jacoco-agent.destfile>${jacoco.reportPath}</jacoco-agent.destfile>
                     </systemProperties>
