@@ -11,8 +11,6 @@ import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.jar.JarException;
 
-import javax.naming.InsufficientResourcesException;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,7 +32,7 @@ public final class ExceptionUtil {
      */
     private static final List<Class<? extends Throwable>> SENSITIVE_EXCEPTION =
         Arrays.asList(FileNotFoundException.class, JarException.class, MissingResourceException.class,
-            ConcurrentModificationException.class, InsufficientResourcesException.class, BindException.class,
+            ConcurrentModificationException.class, BindException.class,
             OutOfMemoryError.class, StackOverflowError.class, SQLException.class);
 
     private ExceptionUtil() {

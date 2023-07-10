@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.platform.center</groupId>
         <artifactId>common</artifactId>
-        <version>platform-jdk11-2023.07-SNAPSHOT</version>
+        <version>platform-jdk17-2023.07-SNAPSHOT</version>
     </parent>
 
     <artifactId>common-model</artifactId>

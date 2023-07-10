@@ -4,16 +4,16 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.platform.center</groupId>
     <artifactId>center</artifactId>
-    <version>platform-jdk11-2023.07-SNAPSHOT</version>
+    <version>platform-jdk17-2023.07-SNAPSHOT</version>
     <name>center</name>
     <packaging>pom</packaging>
     <description>platform project pom</description>
     <properties>
-        <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>2.7.12</spring-boot.version>
+        <spring-boot.version>3.1.1</spring-boot.version>
         <guava.version>31.1-jre</guava.version>
         <jackson.version>2.13.3</jackson.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -28,7 +28,6 @@
         <skywalking.version>8.8.0</skywalking.version>
         <pagehelper.version>5.3.1</pagehelper.version>
         <docker-maven-version>0.42.0</docker-maven-version>
-        <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
         <dom4j.version>2.1.3</dom4j.version>
         <redisson.version>3.17.7</redisson.version>
         <springfox.version>3.0.0</springfox.version>
@@ -127,11 +126,6 @@
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper</artifactId>
                 <version>${pagehelper.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.validation</groupId>
-                <artifactId>jakarta.validation-api</artifactId>
-                <version>${jakarta.validation-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ulisesbocchio</groupId>

@@ -10,7 +10,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import javax.net.ssl.SSLContext;
+import jakarta.net.ssl.SSLContext;
 
 import org.apache.http.auth.AuthSchemeProvider;
 import org.apache.http.client.HttpClient;
