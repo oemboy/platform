@@ -9,10 +9,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +23,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import net.platform.center.bean.CommonResp;
 import net.platform.center.util.ExceptionUtil;
@@ -34,9 +32,7 @@ import net.platform.center.util.JsonUtil;
 
 /**
  * 全局异常处理, 继承{@linkplain ResponseEntityExceptionHandler}。<br/>
- * 增强{@linkplain ResponseEntityExceptionHandler#handleMethodArgumentNotValid(
  * MethodArgumentNotValidException, HttpHeaders, HttpStatus, WebRequest)}
- * 处理， 处理见{@linkplain GlobalExceptionHandler#handleMethodArgumentNotValid(
  * MethodArgumentNotValidException, HttpHeaders, HttpStatus, WebRequest)}。<br/>
  * 基本异常处理见{@linkplain GlobalExceptionHandler#exception(Exception, HttpHeaders, HttpStatus, WebRequest)}。<br/>
  *
@@ -57,50 +53,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     public void setCustomizers(@Autowired(required = false) List<ExceptionCustomizer> customizers) {
         this.customizers = customizers;
-    }
-
-    /**
-     * 处理逻辑见{@linkplain GlobalExceptionHandler#exception(Exception, HttpHeaders, HttpStatus, WebRequest)}
-     *
-     * @param ex 异常对象
-     * @param body 响应体对象
-     * @param headers Http响应请求头信息
-     * @param status Http响应状态码
-     * @param request Spring封装的请求对象
-     * @return {@linkplain ResponseEntity Spring响应实体对象}
-     */
-    @Override
-    @SuppressWarnings("NullableProblems")
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
-        HttpStatus status, WebRequest request) {
-        return exception(ex, headers, HttpStatus.OK, request);
-    }
-
-    /**
-     * {@linkplain MethodArgumentNotValidException 参数校验异常} 需要特殊处理,
-     * 将校验不通过字段的异常详细信息转换成 {@linkplain ExceptionEnum#ERR_PARAM_VALID} 再放回给调用方。
-     *
-     * @param ex 参数校验异常
-     * @return {@linkplain ResponseEntity Spring响应实体对象}
-     */
-    @Override
-    @SuppressWarnings("NullableProblems")
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-        HttpHeaders headers, HttpStatus status, WebRequest request) {
-        log.error("Processing method argument not valid", ex);
-        final List<FieldError> allFieldErr = ex.getBindingResult()
-            .getAllErrors()
-            .stream()
-            .filter(FieldError.class::isInstance)
-            .map(FieldError.class::cast)
-            .collect(Collectors.toList());
-
-        final ResponseComponent respComp =
-            ResponseComponent.builder().status(HttpStatus.OK).headers(headers).request(request).build();
-        if (CollectionUtils.isEmpty(allFieldErr)) {
-            return buildResponseEntity(ERROR, respComp);
-        }
-        return buildResponseEntity(handleFieldError(allFieldErr), respComp);
     }
 
     /**
@@ -135,8 +87,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     /**
      * 处理异常信息， 转为为{@linkplain ResponseEntity}对象， 以便统一异常处理的返回。<br/>
      * {@linkplain ResponseEntity#getBody()} 统一转化为 {@linkplain CommonResp}。<br/>
-     * {@linkplain MethodArgumentNotValidException}异常需要特殊处理，
-     * 详情见{@linkplain GlobalExceptionHandler#handleMethodArgumentNotValid(
+     * {@linkplain MethodArgumentNotValidException}异常需要特殊处理，(
      * MethodArgumentNotValidException, HttpHeaders, HttpStatus, WebRequest)}.<br/>
      * {@linkplain BusinessException} 业务异常可以直接转化成 {@linkplain CommonResp}。<br/>
      * 其他异常则返回 {@linkplain ExceptionEnum#ERROR}.
