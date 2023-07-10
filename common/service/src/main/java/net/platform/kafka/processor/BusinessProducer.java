@@ -1,13 +1,14 @@
 
 package net.platform.kafka.processor;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.util.concurrent.ListenableFuture;
 
 import lombok.extern.slf4j.Slf4j;
 import net.platform.center.util.LogUtil;
@@ -23,8 +24,7 @@ public class BusinessProducer implements Producer<Object, Object> {
     @Autowired
     private KafkaTemplate<Object, Object> kafkaTemplate;
 
-    @Override
-    public ListenableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message, String topic) {
+    public CompletableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message, String topic) {
         setContextMap(message);
         if (log.isDebugEnabled()) {
             log.debug("key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
@@ -43,8 +43,7 @@ public class BusinessProducer implements Producer<Object, Object> {
         }
     }
 
-    @Override
-    public ListenableFuture<SendResult<Object, Object>> writeMessageByPartition(CommonMessage message, String topic,
+    public CompletableFuture<SendResult<Object, Object>> writeMessageByPartition(CommonMessage message, String topic,
         int partition) {
         setContextMap(message);
         if (log.isDebugEnabled()) {
@@ -53,18 +52,16 @@ public class BusinessProducer implements Producer<Object, Object> {
         return sendWithPartition(message.getKafkaKey(), message.getKafkaMessage(), topic, partition);
     }
 
-    private ListenableFuture<SendResult<Object, Object>> sendWithPartition(String key, String payload, String topic,
+    private CompletableFuture<SendResult<Object, Object>> sendWithPartition(String key, String payload, String topic,
         int partition) {
-        final MessageBuilder<String> builder = MessageBuilder.withPayload(payload)
-            .setHeader(KafkaHeaders.MESSAGE_KEY, key)
-            .setHeader(KafkaHeaders.TOPIC, topic);
+        final MessageBuilder<String> builder =
+            MessageBuilder.withPayload(payload).setHeader(KafkaHeaders.KEY, key).setHeader(KafkaHeaders.TOPIC, topic);
 
         if (partition >= 0) {
-            builder.setHeader(KafkaHeaders.PARTITION_ID, partition);
+            builder.setHeader(KafkaHeaders.PARTITION, partition);
         }
-        ListenableFuture<SendResult<Object, Object>> future = kafkaTemplate.send(builder.build());
-        future.addCallback(this.successCallBack(), this.failureCallBack());
-        return future;
+
+        return kafkaTemplate.send(builder.build());
     }
 
 }
