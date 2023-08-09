@@ -78,7 +78,6 @@
                     <systemPropertyVariables>
                         <jacoco-agent.destfile>${jacoco.reportPath}</jacoco-agent.destfile>
                     </systemPropertyVariables>
-                    <forkMode>once</forkMode>
                     <parallel>classes</parallel>
                     <threadCount>8</threadCount>
                 </configuration>
