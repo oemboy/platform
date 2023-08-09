@@ -11,9 +11,12 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import lombok.extern.slf4j.Slf4j;
@@ -128,5 +131,25 @@ public class JsonUtil {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+    public static <T> T convertValue(Object fromValue, Class<T> toValueType) {
+        return OBJECT_MAPPER.convertValue(fromValue, toValueType);
+    }
+
+    public static <T> T convertValue(Object fromValue, TypeReference<T> toValueTypeRef) {
+        return OBJECT_MAPPER.convertValue(fromValue, toValueTypeRef);
+    }
+
+    public static <T> T convertValue(Object fromValue, JavaType toValueType) {
+        return OBJECT_MAPPER.convertValue(fromValue, toValueType);
+    }
+
+    public static ObjectNode createObjectNode() {
+        return OBJECT_MAPPER.createObjectNode();
+    }
+
+    public static ArrayNode createArrayNode() {
+        return OBJECT_MAPPER.createArrayNode();
     }
 }
