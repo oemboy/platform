@@ -75,9 +75,9 @@
                 <configuration>
                     <!--suppress UnresolvedMavenProperty -->
                     <argLine>-Xms512m -Xmx3072m -Dfile.encoding=UTF-8 ${surefireArgLine}</argLine>
-                    <systemProperties>
+                    <systemPropertyVariables>
                         <jacoco-agent.destfile>${jacoco.reportPath}</jacoco-agent.destfile>
-                    </systemProperties>
+                    </systemPropertyVariables>
                     <forkMode>once</forkMode>
                     <parallel>classes</parallel>
                     <threadCount>8</threadCount>
@@ -120,7 +120,6 @@
             </properties>
             <build>
                 <plugins>
-                    <!-- lombok 代码打包 -->
                     <plugin>
                         <groupId>org.projectlombok</groupId>
                         <artifactId>lombok-maven-plugin</artifactId>
