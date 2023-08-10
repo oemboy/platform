@@ -1,0 +1,17 @@
+cosid:
+  namespace: ${spring.application.name}
+  segment: #采用号段模式生成分布式id
+    enabled: true #启用号段模式
+    share:
+      enabled: false #禁止使用共享模式生成分布式id,
+    distributor:
+      type: redis #采用redis策略存储号段信息
+    mode: chain #使用号段链模式
+    provider: #分布式id隔离，避免多个分布式id使用同一个id生成器
+      order: #用于生成订单分布式id
+        mode: chain
+        step: 10 #默认值 偏移长度
+        offset: 0 #默认值，用于重置号段起始位置，需要把redis或者mysql中对应记录删除才会生效
+      product: #用于生成产品分布式id
+        mode: chain
+        step: 30

@@ -22,6 +22,7 @@
         <commons-net.version>3.9.0</commons-net.version>
         <mybatis.spring.boot.version>3.0.2</mybatis.spring.boot.version>
         <groovy.version>3.0.18</groovy.version>
+        <cosid.version>2.4.0</cosid.version>
         <jool.version>0.9.15</jool.version>
         <joor.version>0.9.14</joor.version>
         <jasypt.version>3.0.4</jasypt.version>
@@ -198,6 +199,21 @@
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>me.ahoo.cosid</groupId>
+                <artifactId>cosid-spring-redis</artifactId>
+                <version>${cosid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>me.ahoo.cosid</groupId>
+                <artifactId>cosid-spring-boot-starter</artifactId>
+                <version>${cosid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>me.ahoo.cosid</groupId>
+                <artifactId>cosid-mybatis</artifactId>
+                <version>${cosid.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
