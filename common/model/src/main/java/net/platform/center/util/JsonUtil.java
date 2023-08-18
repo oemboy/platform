@@ -4,6 +4,7 @@ package net.platform.center.util;
 import static net.platform.center.exception.ExceptionEnum.ERR_COMMON_VALID;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -151,5 +152,9 @@ public class JsonUtil {
 
     public static ArrayNode createArrayNode() {
         return OBJECT_MAPPER.createArrayNode();
+    }
+
+    public static JsonNode readTree(InputStream in) throws IOException {
+        return OBJECT_MAPPER.readTree(in);
     }
 }
