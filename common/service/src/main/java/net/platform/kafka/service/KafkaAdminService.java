@@ -191,7 +191,7 @@ public class KafkaAdminService {
             ListConsumerGroupOffsetsResult result = client.listConsumerGroupOffsets(groupId);
             KafkaFuture<KafkaFuture<Long>> future =
                 result.partitionsToOffsetAndMetadata().thenApply(topicPartitionOffsetMap -> {
-                    Map<TopicPartition, OffsetSpec> topicPartitionOffsets = HashMap.newHashMap(32);
+                    Map<TopicPartition, OffsetSpec> topicPartitionOffsets = new HashMap<>(32);
                     topicPartitionOffsetMap.keySet()
                         .stream()
                         .filter(item -> topic.equals(item.topic()))

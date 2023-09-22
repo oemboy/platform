@@ -18,7 +18,7 @@ public class DefaultFlowErrorHandle implements FlowErrorHandle {
     }
 
     public Map<String, Object> getErrorMap(String message) {
-        Map<String, Object> errorMap = HashMap.newHashMap(8);
+        Map<String, Object> errorMap = new HashMap<>(8);
         errorMap.put("code", "0");
         errorMap.put("message", message);
         return errorMap;

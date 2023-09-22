@@ -54,7 +54,7 @@ public class SqlStatementInterceptor implements Interceptor {
 
     public static final String DEFAULT_SKIP_SQL = "recordDfxSql";
 
-    private final Set<String> skipSqlSet = HashSet.newHashSet(8);
+    private final Set<String> skipSqlSet = new HashSet<>(8);
 
     private long timeLimit = TIME_THRESHOLD;
 
