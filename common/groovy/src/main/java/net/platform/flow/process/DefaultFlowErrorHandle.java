@@ -1,10 +1,10 @@
 
 package net.platform.flow.process;
 
-import net.platform.flow.step.EdgeMatcher;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import net.platform.flow.step.EdgeMatcher;
 
 /**
  * @Author: bing zi
@@ -18,7 +18,7 @@ public class DefaultFlowErrorHandle implements FlowErrorHandle {
     }
 
     public Map<String, Object> getErrorMap(String message) {
-        Map<String, Object> errorMap = new HashMap<>(8);
+        Map<String, Object> errorMap = HashMap.newHashMap(8);
         errorMap.put("code", "0");
         errorMap.put("message", message);
         return errorMap;

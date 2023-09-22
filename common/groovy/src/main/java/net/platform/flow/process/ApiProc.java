@@ -87,8 +87,8 @@ public class ApiProc {
         }
 
         Object obj = jsonOutput.exec(res);
-        if (obj instanceof String) {
-            return (String) obj;
+        if (obj instanceof String str) {
+            return str;
         }
 
         return null;

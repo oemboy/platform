@@ -29,8 +29,8 @@ public final class WebUtil {
      */
     public static HttpServletRequest currentHttpServletRequest() {
         final RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
-        if (attributes instanceof ServletRequestAttributes) {
-            return ((ServletRequestAttributes) attributes).getRequest();
+        if (attributes instanceof ServletRequestAttributes servletRequestAttribute) {
+            return servletRequestAttribute.getRequest();
         }
         return null;
     }

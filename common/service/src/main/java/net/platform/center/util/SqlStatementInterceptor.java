@@ -54,7 +54,7 @@ public class SqlStatementInterceptor implements Interceptor {
 
     public static final String DEFAULT_SKIP_SQL = "recordDfxSql";
 
-    private final Set<String> skipSqlSet = new HashSet<>(8);
+    private final Set<String> skipSqlSet = HashSet.newHashSet(8);
 
     private long timeLimit = TIME_THRESHOLD;
 
@@ -123,9 +123,9 @@ public class SqlStatementInterceptor implements Interceptor {
         String value;
         if (obj instanceof String) {
             value = "'" + obj + "'";
-        } else if (obj instanceof Date) {
+        } else if (obj instanceof Date date) {
             DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.CHINA);
-            value = "'" + formatter.format((Date) obj) + "'";
+            value = "'" + formatter.format(date) + "'";
         } else {
             if (obj != null) {
                 value = obj.toString();

@@ -123,8 +123,8 @@ public class HttpClientConfig {
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
         List<HttpMessageConverter<?>> list = restTemplate.getMessageConverters();
         for (HttpMessageConverter<?> converter : list) {
-            if (converter instanceof StringHttpMessageConverter) {
-                ((StringHttpMessageConverter) converter).setDefaultCharset(StandardCharsets.UTF_8);
+            if (converter instanceof StringHttpMessageConverter stringHttpMessageConverter) {
+                stringHttpMessageConverter.setDefaultCharset(StandardCharsets.UTF_8);
             }
         }
 

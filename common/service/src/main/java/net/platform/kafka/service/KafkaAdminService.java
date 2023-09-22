@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import jakarta.annotation.Resource;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
@@ -34,6 +31,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
 import org.springframework.kafka.core.KafkaAdmin;
 
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.platform.center.util.JsonUtil;
 
@@ -83,9 +81,8 @@ public class KafkaAdminService {
 
     public void describeTopicConfigs(Collection<String> topicNames) {
         try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
-            List<ConfigResource> configResources = topicNames.stream()
-                .map(name -> new ConfigResource(ConfigResource.Type.TOPIC, name))
-                .collect(Collectors.toList());
+            List<ConfigResource> configResources =
+                topicNames.stream().map(name -> new ConfigResource(ConfigResource.Type.TOPIC, name)).toList();
             DescribeConfigsResult result = client.describeConfigs(configResources);
             result.all().get();
             log.info(JsonUtil.toJsonPrettyString(result));
@@ -194,7 +191,7 @@ public class KafkaAdminService {
             ListConsumerGroupOffsetsResult result = client.listConsumerGroupOffsets(groupId);
             KafkaFuture<KafkaFuture<Long>> future =
                 result.partitionsToOffsetAndMetadata().thenApply(topicPartitionOffsetMap -> {
-                    Map<TopicPartition, OffsetSpec> topicPartitionOffsets = new HashMap<>(32);
+                    Map<TopicPartition, OffsetSpec> topicPartitionOffsets = HashMap.newHashMap(32);
                     topicPartitionOffsetMap.keySet()
                         .stream()
                         .filter(item -> topic.equals(item.topic()))
