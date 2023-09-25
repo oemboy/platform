@@ -21,7 +21,7 @@
         <commons-io.version>2.13.0</commons-io.version>
         <commons-net.version>3.9.0</commons-net.version>
         <mybatis.spring.boot.version>3.0.2</mybatis.spring.boot.version>
-        <groovy.version>3.0.19</groovy.version>
+        <groovy.version>4.0.15</groovy.version>
         <cosid.version>2.4.0</cosid.version>
         <jool.version>0.9.15</jool.version>
         <joor.version>0.9.14</joor.version>
@@ -58,7 +58,7 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.groovy</groupId>
+                <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy-all</artifactId>
                 <version>${groovy.version}</version>
                 <type>pom</type>
