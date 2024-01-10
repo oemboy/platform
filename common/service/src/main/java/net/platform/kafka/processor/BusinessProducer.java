@@ -3,6 +3,8 @@ package net.platform.kafka.processor;
 
 import java.util.concurrent.CompletableFuture;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -19,9 +21,10 @@ import net.platform.kafka.bean.CommonMessage;
  * @Date: 2021/6/4 15:22
  */
 @Slf4j
+@RequiredArgsConstructor
 public class BusinessProducer implements Producer<Object, Object> {
 
-    @Autowired
+    @NonNull
     private KafkaTemplate<Object, Object> kafkaTemplate;
 
     public CompletableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message, String topic) {

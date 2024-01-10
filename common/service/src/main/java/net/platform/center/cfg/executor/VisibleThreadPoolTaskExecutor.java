@@ -2,6 +2,7 @@
 package net.platform.center.cfg.executor;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -38,6 +39,16 @@ public class VisibleThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
     public ListenableFuture<?> submitListenable(Runnable task) {
         showThreadPoolInfo("1. do submit Listenable");
         return super.submitListenable(task);
+    }
+
+    public <T> CompletableFuture<T> submitCompletable(Callable<T> task) {
+        showThreadPoolInfo("2. do submit Callable Completable");
+        return super.submitCompletable(task);
+    }
+
+    public CompletableFuture<Void> submitCompletable(Runnable task) {
+        showThreadPoolInfo("1. do submit Runnable Completable");
+        return super.submitCompletable(task);
     }
 
     private void showThreadPoolInfo(String prefix) {
