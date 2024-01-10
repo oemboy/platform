@@ -145,6 +145,12 @@
         <dependency>
             <groupId>me.ahoo.cosid</groupId>
             <artifactId>cosid-mybatis</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>mybatis</artifactId>
+                    <groupId>org.mybatis</groupId>
+                </exclusion>
+            </exclusions>
             <optional>true</optional>
         </dependency>
     </dependencies>

@@ -3,15 +3,14 @@ package net.platform.kafka.processor;
 
 import java.util.concurrent.CompletableFuture;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.support.MessageBuilder;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.platform.center.util.LogUtil;
 import net.platform.kafka.bean.CommonMessage;
