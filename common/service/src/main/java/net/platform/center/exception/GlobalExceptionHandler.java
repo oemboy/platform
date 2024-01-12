@@ -9,13 +9,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,8 +35,10 @@ import net.platform.center.util.JsonUtil;
 
 /**
  * 全局异常处理, 继承{@linkplain ResponseEntityExceptionHandler}。<br/>
- * MethodArgumentNotValidException, HttpHeaders, HttpStatus, WebRequest)}
- * MethodArgumentNotValidException, HttpHeaders, HttpStatus, WebRequest)}。<br/>
+ * 增强{@linkplain ResponseEntityExceptionHandler#handleMethodArgumentNotValid(
+ * MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request)}
+ * 处理， 处理见{@linkplain GlobalExceptionHandler#handleMethodArgumentNotValid(
+ * MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request)}。<br/>
  * 基本异常处理见{@linkplain GlobalExceptionHandler#exception(Exception, HttpHeaders, HttpStatus, WebRequest)}。<br/>
  *
  * @author Jack
@@ -56,8 +61,52 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * 处理逻辑见{@linkplain GlobalExceptionHandler#exception(Exception, HttpHeaders, HttpStatus, WebRequest)}
+     *
+     * @param ex 异常对象
+     * @param body 响应体对象
+     * @param headers Http响应请求头信息
+     * @param statusCode Http响应状态码
+     * @param request Spring封装的请求对象
+     * @return {@linkplain ResponseEntity Spring响应实体对象}
+     */
+    @Override
+    @SuppressWarnings("NullableProblems")
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers,
+        HttpStatusCode statusCode, WebRequest request) {
+        return exception(ex, headers, HttpStatus.OK, request);
+    }
+
+    /**
+     * {@linkplain MethodArgumentNotValidException 参数校验异常} 需要特殊处理,
+     * 将校验不通过字段的异常详细信息转换成 {@linkplain ExceptionEnum#ERR_PARAM_VALID} 再放回给调用方。
+     *
+     * @param ex 参数校验异常
+     * @return {@linkplain ResponseEntity Spring响应实体对象}
+     */
+    @Override
+    @SuppressWarnings("NullableProblems")
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+        HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        log.error("Processing method argument not valid", ex);
+        final List<FieldError> allFieldErr = ex.getBindingResult()
+            .getAllErrors()
+            .stream()
+            .filter(FieldError.class::isInstance)
+            .map(FieldError.class::cast)
+            .toList();
+
+        final ResponseComponent respComp =
+            ResponseComponent.builder().status(HttpStatus.OK).headers(headers).request(request).build();
+        if (CollectionUtils.isEmpty(allFieldErr)) {
+            return buildResponseEntity(ERROR, respComp);
+        }
+        return buildResponseEntity(handleFieldError(allFieldErr), respComp);
+    }
+
+    /**
      * 处理全部异常, 处理逻辑见{@linkplain GlobalExceptionHandler#exception(Exception, HttpHeaders, HttpStatus, WebRequest)}
-     * 
+     *
      * @param ex 异常信息
      * @param request 当前请求信息
      * @return {@linkplain ResponseEntity Spring响应实体对象}
@@ -87,8 +136,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     /**
      * 处理异常信息， 转为为{@linkplain ResponseEntity}对象， 以便统一异常处理的返回。<br/>
      * {@linkplain ResponseEntity#getBody()} 统一转化为 {@linkplain CommonResp}。<br/>
-     * {@linkplain MethodArgumentNotValidException}异常需要特殊处理，(
-     * MethodArgumentNotValidException, HttpHeaders, HttpStatus, WebRequest)}.<br/>
+     * {@linkplain MethodArgumentNotValidException}异常需要特殊处理，
+     * 详情见{@linkplain GlobalExceptionHandler#handleMethodArgumentNotValid(
+     * MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request)}.<br/>
      * {@linkplain BusinessException} 业务异常可以直接转化成 {@linkplain CommonResp}。<br/>
      * 其他异常则返回 {@linkplain ExceptionEnum#ERROR}.
      *
@@ -110,7 +160,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         log.error("Processing failed", ex);
-        ExceptionCode errCode = ex instanceof BusinessException ? (BusinessException) ex : ERROR;
+        ExceptionCode errCode = ex instanceof BusinessException exception ? exception : ERROR;
         return buildResponseEntity(errCode, respComp);
     }
 
