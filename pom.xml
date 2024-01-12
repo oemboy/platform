@@ -325,8 +325,10 @@
                     <encoding>UTF-8</encoding>
                     <verbose>true</verbose>
                     <showWarnings>true</showWarnings>
-                    <compilerArgument>-Xlint:unchecked
-                    </compilerArgument>
+                    <compilerArgs>
+                        <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:deprecation</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <!-- findbugs插件 ：静态检查代码的错误-->

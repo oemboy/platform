@@ -36,11 +36,13 @@ public class VisibleThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public ListenableFuture<?> submitListenable(Runnable task) {
         showThreadPoolInfo("1. do submit Listenable");
         return super.submitListenable(task);
     }
 
+    @SuppressWarnings("deprecation")
     public <T> CompletableFuture<T> submitCompletable(Callable<T> task) {
         showThreadPoolInfo("2. do submit Callable Completable");
         return super.submitCompletable(task);
