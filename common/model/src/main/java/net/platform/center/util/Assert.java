@@ -5,17 +5,19 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-import org.springframework.lang.Nullable;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
+import javax.annotation.Nullable;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import net.platform.center.exception.BusinessException;
 import net.platform.center.exception.ExceptionCode;
 
 /**
- * @Author: jack
- * @Date: 2021/6/4 15:22
+ * @author jack
+ * @since 2021/6/4 15:22
  */
 
 public final class Assert {
@@ -94,10 +96,9 @@ public final class Assert {
      * @param text the String to check
      * @param code the exception message to use if the assertion fails
      * @throws BusinessException if the text is empty
-     * @see StringUtils#hasLength
      */
     public static void hasLength(@Nullable String text, ExceptionCode code, Object... args) {
-        if (!StringUtils.hasLength(text)) {
+        if (StringUtils.isBlank(text)) {
             throw new BusinessException(code, args);
         }
     }
@@ -113,10 +114,10 @@ public final class Assert {
      * @param text the String to check
      * @param code the exception message to use if the assertion fails
      * @throws BusinessException if the text does not contain valid text content
-     * @see StringUtils#hasText
+     * @see StringUtils
      */
     public static void hasText(@Nullable String text, ExceptionCode code, Object... args) {
-        if (!StringUtils.hasText(text)) {
+        if (StringUtils.isBlank(text)) {
             throw new BusinessException(code, args);
         }
     }
@@ -135,8 +136,7 @@ public final class Assert {
      */
     public static void doesNotContain(@Nullable String textToSearch, String substring, ExceptionCode code,
         Object... args) {
-        if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring)
-            && textToSearch.contains(substring)) {
+        if (StringUtils.contains(textToSearch,substring)) {
             throw new BusinessException(code, args);
         }
     }
@@ -238,7 +238,7 @@ public final class Assert {
      * @throws BusinessException if the map is {@code null} or contains no entries
      */
     public static void notEmpty(@Nullable Map<?, ?> map, ExceptionCode code, Object... args) {
-        if (CollectionUtils.isEmpty(map)) {
+        if (MapUtils.isEmpty(map)) {
             throw new BusinessException(code, args);
         }
     }

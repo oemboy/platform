@@ -24,6 +24,11 @@ public enum ExceptionEnum implements ExceptionCode {
     ERROR("0", "Processing failed"),
 
     /**
+     * 通用业务错误
+     */
+    ERROR_BIZ("10101001", "错误： {0}"),
+
+    /**
      * 公共异常编码
      */
     ERR_PARAM_VALID("1000000", "Parameter valid error, message: {0}"),
