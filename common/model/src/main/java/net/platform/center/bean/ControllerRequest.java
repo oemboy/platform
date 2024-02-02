@@ -20,7 +20,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class CommonRequest<T> extends RequestHeader {
+public class ControllerRequest<T> extends RequestHeader {
     @JsonProperty("body")
     private T body;
 }
