@@ -3,14 +3,16 @@ package net.platform.center.bean;
 
 import java.io.Serializable;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 
 @Data
+@Builder
 public class Dictionary implements Serializable {
     private String dictId;
 

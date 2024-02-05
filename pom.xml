@@ -327,7 +327,13 @@
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.3.2</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.12.1</version>
+                </plugin>
             </plugins>
+
         </pluginManagement>
 
         <plugins>
@@ -364,7 +370,7 @@
                     <execution>
                         <id>findbugs</id>
                         <!-- 在install 阶段触发执行findbugs检查，比如执行 mvn clean package-->
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>

@@ -20,9 +20,8 @@ import lombok.extern.slf4j.Slf4j;
  * <li>敏感异常识别{@linkplain ExceptionUtil#isSensitiveException(Throwable)}</li>
  * </p>
  *
- * @Author: Jack
- * @Date: 2021/9/5
- * @since 1.0.0
+ * @author Jack
+ * @since 2021/9/5
  */
 @Slf4j
 public final class ExceptionUtil {
@@ -46,7 +45,6 @@ public final class ExceptionUtil {
      * <li>{@linkplain JarException}：泄露文件系统结构</li>
      * <li>{@linkplain MissingResourceException}：资源列举</li>
      * <li>{@linkplain ConcurrentModificationException} ：可能提供线程不安全的代码信息</li>
-     * <li>{@linkplain InsufficientResourcesException}：服务器资源不足，可能会造成dos攻击</li>
      * <li>{@linkplain BindException}：当不信任客户端能够选择服务器端口时造成开放端口列举</li>
      * <li>{@linkplain OutOfMemoryError}：服务器资源不足，可能会造成dos攻击</li>
      * <li>{@linkplain StackOverflowError}：服务器资源不足，可能会造成dos攻击</li>
