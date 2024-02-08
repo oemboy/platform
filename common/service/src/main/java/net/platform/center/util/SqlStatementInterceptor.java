@@ -1,12 +1,13 @@
 
 package net.platform.center.util;
 
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -35,8 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.platform.center.bean.DfxSqlBean;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 @Slf4j
 @Intercepts(value = {@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
@@ -124,11 +125,12 @@ public class SqlStatementInterceptor implements Interceptor {
         if (obj instanceof String) {
             value = "'" + obj + "'";
         } else if (obj instanceof Date date) {
-            DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.CHINA);
-            value = "'" + formatter.format(date) + "'";
+            value = "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date) + "'";
+        } else if (obj instanceof LocalDateTime date) {
+            value = "'" + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "'";
         } else {
             if (obj != null) {
-                value = obj.toString();
+                value = "'" + obj + "'";
             } else {
                 value = "NULL";
             }
