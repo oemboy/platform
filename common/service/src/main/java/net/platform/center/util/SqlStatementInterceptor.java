@@ -128,6 +128,8 @@ public class SqlStatementInterceptor implements Interceptor {
             value = "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date) + "'";
         } else if (obj instanceof LocalDateTime date) {
             value = "'" + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "'";
+        } else if (obj instanceof Number num) {
+            value = num.toString();
         } else {
             if (obj != null) {
                 value = "'" + obj + "'";
