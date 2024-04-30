@@ -17,6 +17,7 @@ import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
 import org.apache.hc.client5.http.ssl.TrustAllStrategy;
@@ -68,7 +69,8 @@ public class HttpClientConfig {
 
             SSLConnectionSocketFactory socketFactory = SSLConnectionSocketFactoryBuilder.create()
                 .setSslContext(sslContext)
-                // .setTlsVersions(TLS.V_1_1, TLS.V_1_2, TLS.V_1_3)
+                // .setTlsVersions(TLS.V_1_1, TLS.V_1_2, TLS.V_1_3
+                .setHostnameVerifier(NoopHostnameVerifier.INSTANCE)
                 .build();
 
             builder.setSSLSocketFactory(socketFactory);
