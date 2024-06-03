@@ -51,7 +51,7 @@ public class SqlStatementInterceptor implements Interceptor {
 
     public static final String SKIP_SQL_KEY = "skipSql";
 
-    public static final String TIME_LIMIT_KEY = "dfxSqlTimeLimit";
+    public static final String TIME_LIMIT_KEY = "dfxSqlTimeout";
 
     public static final String DEFAULT_SKIP_SQL = "recordDfxSql";
 
@@ -61,63 +61,72 @@ public class SqlStatementInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        Object returnValue;
-
         final Object[] args = invocation.getArgs();
-
-        MappedStatement mappedStatement = (MappedStatement) args[0];
-        String sqlId = mappedStatement.getId();
         long start = System.currentTimeMillis();
 
-        Object parameter = null;
-        if (args.length > 1) {
-            parameter = args[1];
-        }
         DfxSqlBean dfxSqlBean = null;
         try {
             if (log.isDebugEnabled()) {
-                dfxSqlBean = showDfxSql(mappedStatement, sqlId, parameter);
+                dfxSqlBean = showDfxSql(args);
             }
-            returnValue = invocation.proceed();
+            return invocation.proceed();
         } finally {
-            setDfxSqlContext(mappedStatement, sqlId, start, parameter, dfxSqlBean);
+            long span = System.currentTimeMillis() - start;
+            if (span < timeLimit) {
+                log.debug(costTime(span));
+            } else {
+                log.warn(costTime(span));
+                setDfxSqlContext(args, span, dfxSqlBean);
+            }
         }
-        return returnValue;
     }
 
-    private void setDfxSqlContext(MappedStatement mappedStatement, String sqlId, long start, Object parameter,
-        DfxSqlBean dfxSqlBean) {
-        long time = System.currentTimeMillis() - start;
-        if (time < timeLimit) {
-            log.debug(costTime(sqlId, time));
-        } else {
-            log.warn(costTime(sqlId, time));
-            if (dfxSqlBean == null && MDC.get(LogUtil.DFX_LOG_NAME) != null) {
-                dfxSqlBean = showDfxSql(mappedStatement, sqlId, parameter);
-            }
+    private void setDfxSqlContext(Object[] args, long span, DfxSqlBean dfxSqlBean) {
+        if (dfxSqlBean == null && MDC.get(LogUtil.DFX_LOG_NAME) != null) {
+            dfxSqlBean = showDfxSql(args);
         }
         if (dfxSqlBean != null) {
-            dfxSqlBean.setTimeSpan(time);
+            dfxSqlBean.setTimeSpan(span);
         }
     }
 
-    private DfxSqlBean showDfxSql(MappedStatement mappedStatement, String sqlId, Object parameter) {
+    private DfxSqlBean showDfxSql(Object[] args) {
         DfxSqlBean dfxSqlBean = null;
-        if (!sqlId.contains(DEFAULT_SKIP_SQL)) {
-            BoundSql boundSql = mappedStatement.getBoundSql(parameter);
-            Configuration configuration = mappedStatement.getConfiguration();
-            String sql = showSql(configuration, boundSql);
-            log.debug("SqlStatementInterceptor PRINT sql[{}]:{}{}", sqlId, System.lineSeparator(), sql);
-            if (skipSqlSet.stream().noneMatch(sqlId::contains)) {
-                dfxSqlBean = new DfxSqlBean(sqlId, boundSql.getSql(), sql);
-                ApplicationContextHolder.setDfxSql(dfxSqlBean);
+        Object parameter;
+        BoundSql boundSql;
+        try {
+            // Executor method 'update' has two args
+            // Executor method 'query' has six args
+            MappedStatement mappedStatement = (MappedStatement) args[0];
+            String sqlId = mappedStatement.getId();
+
+            // 无需打印的sqlId
+            if (skipSqlSet.stream().anyMatch(sqlId::contains)) {
+                return null;
             }
+
+            if (args.length == 6) {
+                boundSql = (BoundSql) args[5];
+                parameter = boundSql.getParameterObject();
+            } else {
+                parameter = args[1];
+                boundSql = mappedStatement.getBoundSql(parameter);
+            }
+
+            Configuration configuration = mappedStatement.getConfiguration();
+            String sql = showSql(configuration, parameter, boundSql);
+            log.debug("SqlStatementInterceptor PRINT: [{}]:{}{}", sqlId, System.lineSeparator(), sql);
+
+            dfxSqlBean = new DfxSqlBean(sqlId, boundSql.getSql(), sql);
+            ApplicationContextHolder.setDfxSql(dfxSqlBean);
+        } catch (Exception e) {
+            log.warn("SqlStatementInterceptor build sql with parameters error: {}", e.getMessage());
         }
         return dfxSqlBean;
     }
 
-    public String costTime(String sqlId, long time) {
-        return sqlId + ": 耗时【" + time + "】毫秒";
+    public String costTime(long time) {
+        return "耗时【" + time + "】毫秒";
     }
 
     public String getParameterValue(Object obj) {
@@ -140,8 +149,7 @@ public class SqlStatementInterceptor implements Interceptor {
         return value;
     }
 
-    public String showSql(Configuration configuration, BoundSql boundSql) {
-        Object parameter = boundSql.getParameterObject();
+    public String showSql(Configuration configuration, Object parameter, BoundSql boundSql) {
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         String sql = boundSql.getSql().replaceAll("[\\s]]+", " ");
         try {
@@ -183,20 +191,16 @@ public class SqlStatementInterceptor implements Interceptor {
     }
 
     private long getTimeLimit(String property) {
-        if (StringUtils.isBlank(property)) {
-            return TIME_THRESHOLD;
-        }
         try {
             return Long.parseLong(property);
         } catch (Exception e) {
-            log.warn("mybatis config error: {}", property);
+            log.info("{} use default: {}", TIME_LIMIT_KEY, TIME_THRESHOLD);
             return TIME_THRESHOLD;
         }
     }
 
     private void toSqlSet(Stream<String> item) {
-        item.filter(StringUtils::isNotBlank).forEach(skipSqlSet::add);
+        item.filter(StringUtils::isNotBlank).map(StringUtils::trim).forEach(skipSqlSet::add);
         log.debug("skipSqlSet: {}", skipSqlSet);
     }
-
 }

@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @Author: bing zi
- * @Date: 2022/7/27
+ * @author bing zi
+ * @since 2022/7/27
  */
 public interface DfxFunction {
     /**

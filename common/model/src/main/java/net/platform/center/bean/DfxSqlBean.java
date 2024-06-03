@@ -11,8 +11,8 @@ import net.platform.center.util.DfxFunction;
 import net.platform.center.util.DigestUtil;
 
 /**
- * @Author: bing zi
- * @Date: 2022/7/27
+ * @author bing zi
+ * @since 2022/7/27
  */
 
 @Slf4j

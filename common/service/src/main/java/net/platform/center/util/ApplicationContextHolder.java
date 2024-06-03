@@ -19,8 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.platform.center.bean.DfxSqlBean;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 
 @Slf4j
@@ -56,8 +56,10 @@ public class ApplicationContextHolder implements ApplicationContextAware {
         return getRuntimeContext().getDfxSqlBeanMap();
     }
 
-    public static void setDfxSql(@NonNull DfxSqlBean dfxSqlBean) {
-        getRuntimeContext().getDfxSqlBeanMap().put(dfxSqlBean, dfxSqlBean.getSqlId());
+    public static void setDfxSql(DfxSqlBean dfxSqlBean) {
+        if (dfxSqlBean != null) {
+            getRuntimeContext().getDfxSqlBeanMap().put(dfxSqlBean, dfxSqlBean.getSqlId());
+        }
     }
 
     public static void removeContextMapEntry(@NonNull String key) {
