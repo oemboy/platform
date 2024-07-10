@@ -40,8 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.platform.center.exception.BusinessException;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 
 @Configuration
@@ -143,8 +143,8 @@ public class HttpClientConfig {
     private void moveLogInterceptor(List<ClientHttpRequestInterceptor> interceptors) {
         HttpClientLogInterceptor logInterceptor = null;
         for (int i = 0; i < interceptors.size() - 1; i++) {
-            if (interceptors.get(i) instanceof HttpClientLogInterceptor) {
-                logInterceptor = (HttpClientLogInterceptor) interceptors.get(i);
+            if (interceptors.get(i) instanceof HttpClientLogInterceptor httpClientLogInterceptor) {
+                logInterceptor = httpClientLogInterceptor;
                 interceptors.remove(i);
                 break;
             }

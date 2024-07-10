@@ -21,7 +21,7 @@ import net.platform.center.util.LogUtil;
 
 /**
  * @author Jack
- * @date 2021/09/03
+ * @since 2021/09/03
  */
 @Slf4j
 public final class ExceptionAssistant {
@@ -46,7 +46,7 @@ public final class ExceptionAssistant {
         }
 
         log.error("处理异常", ex);
-        ExceptionCode errCode = ex instanceof ExceptionCode ? (ExceptionCode) ex : ExceptionEnum.ERROR;
+        ExceptionCode errCode = ex instanceof ExceptionCode ec ? ec : ExceptionEnum.ERROR;
         final CommonResp body = new CommonResp();
         body.setCode(errCode.getCode());
         body.setMessage(errCode.getMessage());

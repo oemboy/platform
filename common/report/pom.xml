@@ -5,18 +5,14 @@
 
     <parent>
         <groupId>net.platform.center</groupId>
-        <artifactId>center</artifactId>
+        <artifactId>common</artifactId>
         <version>platform-jdk17-2024.01-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>common-report</artifactId>
     <name>common-report</name>
     <description>order-report</description>
     <packaging>pom</packaging>
-
-    <properties>
-        <sonar.skip>true</sonar.skip>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -58,7 +54,7 @@
                                 </goals>
                                 <configuration>
                                     <outputDirectory>
-                                        ${jacoco.coveragePath}/target/site/jacoco-aggregate
+                                        ${project.basedir}/target/site/jacoco
                                     </outputDirectory>
                                 </configuration>
                             </execution>

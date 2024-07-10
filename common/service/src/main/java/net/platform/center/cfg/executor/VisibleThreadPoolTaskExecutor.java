@@ -12,8 +12,8 @@ import org.springframework.util.concurrent.ListenableFuture;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 @Slf4j
 public class VisibleThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
@@ -42,12 +42,13 @@ public class VisibleThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
         return super.submitListenable(task);
     }
 
-    @SuppressWarnings("deprecation")
+    @Override
     public <T> CompletableFuture<T> submitCompletable(Callable<T> task) {
         showThreadPoolInfo("2. do submit Callable Completable");
         return super.submitCompletable(task);
     }
 
+    @Override
     public CompletableFuture<Void> submitCompletable(Runnable task) {
         showThreadPoolInfo("1. do submit Runnable Completable");
         return super.submitCompletable(task);

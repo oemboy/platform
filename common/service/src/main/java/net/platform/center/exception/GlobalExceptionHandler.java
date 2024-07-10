@@ -42,8 +42,7 @@ import net.platform.center.util.JsonUtil;
  * 基本异常处理见{@linkplain GlobalExceptionHandler#exception(Exception, HttpHeaders, HttpStatus, WebRequest)}。<br/>
  *
  * @author Jack
- * @date 2021/9/5
- * @since 1.0.0
+ * @since 2021/9/5
  */
 @Slf4j
 @ControllerAdvice

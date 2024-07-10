@@ -3,6 +3,7 @@ package net.platform.flow.process;
 
 import static net.platform.center.exception.ExceptionEnum.ERR_COMMON_VALID;
 
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.graph.ImmutableValueGraph;
@@ -18,8 +19,8 @@ import net.platform.flow.step.StartStep;
 import net.platform.flow.step.Step;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 @Slf4j
 @SuppressWarnings("UnstableApiUsage")
@@ -28,7 +29,7 @@ public class Flow {
 
     private static final EndStep END_STEP = EndStep.SIMPLE;
 
-    private ImmutableValueGraph<Step, EdgeMatcher> graph;
+    private final ImmutableValueGraph<Step, EdgeMatcher> graph;
 
     public Flow(ValueGraph<Step, EdgeMatcher> mutableGraph) {
         graph = ImmutableValueGraph.copyOf(mutableGraph);
@@ -80,7 +81,12 @@ public class Flow {
             final Set<Step> successors = graph.successors(curr);
             boolean found = false;
             for (Step successor : successors) {
-                EdgeMatcher edgeMatcher = graph.edgeValue(curr, successor).get();
+                Optional<EdgeMatcher> edgeValue = graph.edgeValue(curr, successor);
+                if (edgeValue.isEmpty()) {
+                    throw new BusinessException(ERR_COMMON_VALID, "The edge is not exist!");
+                }
+
+                EdgeMatcher edgeMatcher = edgeValue.get();
                 if (edgeMatcher == EdgeMatcher.ANY || edgeMatcher == state) {
                     curr = successor;
                     found = true;
@@ -93,15 +99,15 @@ public class Flow {
             }
         }
 
-        if (curr == END_STEP) {
+        if (curr != null) {
             log.info("Flow run curr name: {}, type: {}", curr.getName(), curr.getType());
         }
+
     }
 
     public EdgeMatcher errorHandle(FlowContext<String, Object> ctx, Exception e, String name) {
         Object obj = ctx.get("errorHandle");
-        if (obj instanceof FlowErrorHandle) {
-            FlowErrorHandle handler = (FlowErrorHandle) obj;
+        if (obj instanceof FlowErrorHandle handler) {
             return handler.handle(ctx, e, name);
         } else {
             throw new BusinessException(ERR_COMMON_VALID, e);

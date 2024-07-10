@@ -33,8 +33,8 @@ public class ApiProc {
     private final FlowErrorHandle flowErrorHandle = new DefaultFlowErrorHandle();
 
     private final FlowBaseUnit parseJson = args -> {
-        if (args instanceof String) {
-            return JSON_PARSER.parseText((String) args);
+        if (args instanceof String strArg) {
+            return JSON_PARSER.parseText(strArg);
         }
         return null;
     };

@@ -13,6 +13,14 @@
     <name>common</name>
     <description>common of platform project</description>
 
+    <properties>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.basedir}/report/target/site/jacoco/jacoco.xml,
+            ${project.basedir}/../report/target/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.projectKey>platform</sonar.projectKey>
+    </properties>
+
     <modules>
         <module>model</module>
         <module>groovy</module>
@@ -62,8 +70,7 @@
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>
-            <version>${jacoco.version}</version>
-            <classifier>runtime</classifier>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -75,9 +82,6 @@
                 <configuration>
                     <!--suppress UnresolvedMavenProperty -->
                     <argLine>-Xms512m -Xmx3072m -Dfile.encoding=UTF-8 ${surefireArgLine}</argLine>
-                    <systemPropertyVariables>
-                        <jacoco-agent.destfile>${jacoco.reportPath}</jacoco-agent.destfile>
-                    </systemPropertyVariables>
                     <parallel>classes</parallel>
                     <threadCount>8</threadCount>
                 </configuration>
@@ -92,17 +96,10 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
+                            <destFile>
+                                ${jacoco.reportPath}
+                            </destFile>
                             <propertyName>surefireArgLine</propertyName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>post-test</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>${jacoco.reportPath}</dataFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -149,6 +146,29 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>platform_sonar</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>sonar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
     </profiles>
 </project>

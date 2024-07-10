@@ -4,8 +4,8 @@ package net.platform.flow.step;
 import net.platform.flow.process.FlowContext;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author  bing zi
+ * @since 2021/6/4 15:22
  */
 public abstract class Condition implements Step {
     private String name;

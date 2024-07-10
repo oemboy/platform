@@ -20,16 +20,6 @@ public abstract class EndStep implements Step {
         return StepType.END;
     }
 
-    /**
-     * 执行
-     * @param ctx 上下文
-     * @return 匹配条件
-     * @param <K> key
-     * @param <V> value
-     */
-    @Override
-    public abstract <K, V> EdgeMatcher run(FlowContext<K, V> ctx);
-
     @Override
     public String getName() {
         return "end";
