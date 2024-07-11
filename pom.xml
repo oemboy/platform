@@ -36,6 +36,7 @@
         <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
         <sonar.plugin.version>3.11.0.3922</sonar.plugin.version>
         <sonar.test.exclusions>**/test/*</sonar.test.exclusions>
+        <sonar.projectKey>platform-jdk17</sonar.projectKey>
         <checkstyle.config.location>${devops.site}/checkstyle.xml</checkstyle.config.location>
         <excludeFilter.url>${devops.site}/findbugs-exclude-filter.xml</excludeFilter.url>
         <sourceDir>${origSourceDir}</sourceDir>

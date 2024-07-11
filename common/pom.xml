@@ -18,7 +18,6 @@
             ${project.basedir}/report/target/site/jacoco/jacoco.xml,
             ${project.basedir}/../report/target/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.projectKey>platform</sonar.projectKey>
     </properties>
 
     <modules>
