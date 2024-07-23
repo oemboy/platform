@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
@@ -57,7 +58,9 @@ public class KafkaAdminService {
         try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
             CreateTopicsResult result = client.createTopics(list);
             result.all().get();
-            log.info(JsonUtil.toJsonPrettyString(result));
+            if (log.isInfoEnabled()) {
+                log.info(JsonUtil.toJsonPrettyString(result));
+            }
         } catch (InterruptedException e) {
             log.error(INTERRUPTED_EXCEPTION, e);
             Thread.currentThread().interrupt();
@@ -70,7 +73,9 @@ public class KafkaAdminService {
         try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
             DeleteTopicsResult result = client.deleteTopics(topicNames);
             result.all().get();
-            log.info(JsonUtil.toJsonPrettyString(result));
+            if (log.isInfoEnabled()) {
+                log.info(JsonUtil.toJsonPrettyString(result));
+            }
         } catch (InterruptedException e) {
             log.error(INTERRUPTED_EXCEPTION, e);
             Thread.currentThread().interrupt();
@@ -79,35 +84,43 @@ public class KafkaAdminService {
         }
     }
 
-    public void describeTopicConfigs(Collection<String> topicNames) {
+    public DescribeConfigsResult describeTopicConfigs(Collection<String> topicNames) {
         try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
             List<ConfigResource> configResources =
                 topicNames.stream().map(name -> new ConfigResource(ConfigResource.Type.TOPIC, name)).toList();
             DescribeConfigsResult result = client.describeConfigs(configResources);
-            result.all().get();
-            log.info(JsonUtil.toJsonPrettyString(result));
+            Map<ConfigResource, Config> configMap = result.all().get();
+            if (log.isInfoEnabled()) {
+                log.info(JsonUtil.toJsonPrettyString(configMap));
+            }
+            return result;
         } catch (InterruptedException e) {
             log.error(INTERRUPTED_EXCEPTION, e);
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
             log.error(EXECUTION_EXCEPTION, e);
         }
+        return null;
     }
 
-    public void describeCluster(Boolean includeAuthorized) {
+    public DescribeClusterResult describeCluster(Boolean includeAuthorized) {
         try (AdminClient client = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
             final DescribeClusterOptions options = new DescribeClusterOptions();
             options.includeAuthorizedOperations(includeAuthorized);
 
             DescribeClusterResult result = client.describeCluster(options);
-            log.info("Cluster id: {}, controller: {}", result.clusterId().get(), result.controller().get());
-            JsonUtil.toJsonPrettyString(result);
+            if (log.isInfoEnabled()) {
+                log.info("Cluster id: {}, controller: {}", result.clusterId().get(), result.controller().get());
+                log.info(JsonUtil.toJsonPrettyString(result));
+            }
+            return result;
         } catch (InterruptedException e) {
             log.error(INTERRUPTED_EXCEPTION, e);
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
             log.error(EXECUTION_EXCEPTION, e);
         }
+        return null;
     }
 
     public Set<String> listAllTopics(Boolean listInternal) {
@@ -158,7 +171,9 @@ public class KafkaAdminService {
             options.includeAuthorizedOperations(includeAuthorized);
 
             DescribeTopicsResult result = client.describeTopics(topicNames, options);
-            log.info(JsonUtil.toJsonPrettyString(result.allTopicNames().get()));
+            if (log.isInfoEnabled()) {
+                log.info(JsonUtil.toJsonPrettyString(result.allTopicNames().get()));
+            }
             return result.allTopicNames().get();
         } catch (InterruptedException e) {
             log.error(INTERRUPTED_EXCEPTION, e);
@@ -202,10 +217,13 @@ public class KafkaAdminService {
                         .thenApply(r -> r.entrySet().stream().map(entry -> {
                             long offset = topicPartitionOffsetMap.get(entry.getKey()).offset();
                             log.debug("consumer offset: {}", offset);
+
                             long endOffset = entry.getValue().offset();
                             log.debug("endOffset: {}", endOffset);
                             long lag = endOffset - offset;
-                            log.info("topic:{}, lag:{}", entry.getKey().topic(), lag);
+                            if (log.isInfoEnabled()) {
+                                log.info("topic:{}, lag:{}", entry.getKey().topic(), lag);
+                            }
                             return lag;
                         }).reduce(0L, Long::sum));
                 });

@@ -3,9 +3,6 @@ package net.platform.kafka.cfg;
 
 import java.util.Collection;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
@@ -13,11 +10,13 @@ import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 @Slf4j
 @EnableScheduling
@@ -36,8 +35,10 @@ public class KafkaCronConfig {
                 .getClientId()
                 .startsWith("cron-consumer"))
             .forEach(listenerContainer -> {
-                log.info("listenerContainer clientId: {} {}", listenerContainer.getContainerProperties().getClientId(),
-                    listenerContainer.getListenerId());
+                if (log.isInfoEnabled()) {
+                    log.info("startListener clientId: {} {}", listenerContainer.getContainerProperties().getClientId(),
+                        listenerContainer.getListenerId());
+                }
 
                 if (!listenerContainer.isRunning()) {
                     log.info("start listener...");
@@ -58,10 +59,12 @@ public class KafkaCronConfig {
                 .getClientId()
                 .startsWith("cron-consumer"))
             .forEach(listenerContainer -> {
-                log.info("listenerContainer clientId: {} {}", listenerContainer.getContainerProperties().getClientId(),
-                    listenerContainer.getListenerId());
+                if (log.isInfoEnabled()) {
+                    log.info("stopListener clientId: {} {}", listenerContainer.getContainerProperties().getClientId(),
+                        listenerContainer.getListenerId());
 
-                log.info("stop listener...");
+                    log.info("stop listener...");
+                }
                 listenerContainer.pause();
             });
     }

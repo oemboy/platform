@@ -94,7 +94,6 @@ public class Flow {
                 }
             }
             if (!found) {
-                log.error("not found next node!!!");
                 throw new BusinessException(ERR_COMMON_VALID, "The next node is not exist!");
             }
         }

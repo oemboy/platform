@@ -30,7 +30,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
-import org.slf4j.MDC;
 
 import lombok.extern.slf4j.Slf4j;
 import net.platform.center.bean.DfxSqlBean;
@@ -64,27 +63,23 @@ public class SqlStatementInterceptor implements Interceptor {
         final Object[] args = invocation.getArgs();
         long start = System.currentTimeMillis();
 
-        DfxSqlBean dfxSqlBean = null;
         try {
-            if (log.isDebugEnabled()) {
-                dfxSqlBean = showDfxSql(args);
-            }
             return invocation.proceed();
         } finally {
             long span = System.currentTimeMillis() - start;
+            // sql消耗时间较少时或者debug未打开时, 不记录sql
             if (span < timeLimit) {
-                log.debug(costTime(span));
+                log.debug("sql cost time: {}", span);
             } else {
-                log.warn(costTime(span));
-                setDfxSqlContext(args, span, dfxSqlBean);
+                // debug未打开时, 但是sql时间超长时, 依然记录sql
+                log.warn("sql cost too much time: {}", span);
+                setDfxSqlContext(args, span);
             }
         }
     }
 
-    private void setDfxSqlContext(Object[] args, long span, DfxSqlBean dfxSqlBean) {
-        if (dfxSqlBean == null && MDC.get(LogUtil.DFX_LOG_NAME) != null) {
-            dfxSqlBean = showDfxSql(args);
-        }
+    private void setDfxSqlContext(Object[] args, long span) {
+        DfxSqlBean dfxSqlBean = showDfxSql(args);
         if (dfxSqlBean != null) {
             dfxSqlBean.setTimeSpan(span);
         }
@@ -115,7 +110,9 @@ public class SqlStatementInterceptor implements Interceptor {
 
             Configuration configuration = mappedStatement.getConfiguration();
             String sql = showSql(configuration, parameter, boundSql);
-            log.debug("SqlStatementInterceptor PRINT: [{}]:{}{}", sqlId, System.lineSeparator(), sql);
+            if (log.isDebugEnabled()) {
+                log.debug("SqlStatementInterceptor PRINT: [{}]:{}{}", sqlId, System.lineSeparator(), sql);
+            }
 
             dfxSqlBean = new DfxSqlBean(sqlId, boundSql.getSql(), sql);
             ApplicationContextHolder.setDfxSql(dfxSqlBean);
@@ -123,10 +120,6 @@ public class SqlStatementInterceptor implements Interceptor {
             log.warn("SqlStatementInterceptor build sql with parameters error: {}", e.getMessage());
         }
         return dfxSqlBean;
-    }
-
-    public String costTime(long time) {
-        return "耗时【" + time + "】毫秒";
     }
 
     public String getParameterValue(Object obj) {

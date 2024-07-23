@@ -16,8 +16,8 @@ import net.platform.center.util.LogUtil;
 import net.platform.kafka.bean.CommonMessage;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public class BusinessProducer implements Producer<Object, Object> {
     public CompletableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message, String topic) {
         setContextMap(message);
         if (log.isDebugEnabled()) {
-            log.debug("key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
+            log.debug("writeMessage key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
         }
         return sendWithPartition(message.getKafkaKey(), message.getKafkaMessage(), topic, -1);
     }
@@ -49,7 +49,7 @@ public class BusinessProducer implements Producer<Object, Object> {
         int partition) {
         setContextMap(message);
         if (log.isDebugEnabled()) {
-            log.debug("key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
+            log.debug("writeMessageByPartition key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
         }
         return sendWithPartition(message.getKafkaKey(), message.getKafkaMessage(), topic, partition);
     }

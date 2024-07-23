@@ -65,7 +65,7 @@ public class HttpClientLogInterceptor implements ClientHttpRequestInterceptor {
                 log.debug("Headers      : {}", headers);
                 // 优先取 response 字符编码
                 InputStream stream = response.getBody();
-                if (stream instanceof ByteArrayInputStream) {
+                if (stream instanceof ByteArrayInputStream && log.isDebugEnabled()) {
                     log.debug("Response body: {}", StreamUtils.copyToString(stream, responseCharset(headers)));
 
                 }

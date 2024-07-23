@@ -4,10 +4,10 @@ package net.platform.center.util;
 import java.util.UUID;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
-public class UUIDGenerator {
+public final class UUIDGenerator {
     private UUIDGenerator() {
     }
 
