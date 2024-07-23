@@ -24,11 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.platform.center.exception.BusinessException;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 @Slf4j
-public class JsonUtil {
+public final class JsonUtil {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     static {
@@ -123,7 +123,7 @@ public class JsonUtil {
 
     public static <T> T readValue(byte[] contentByte, Class<T> type) {
         if (ArrayUtils.isEmpty(contentByte)) {
-            log.warn("content or type is empty");
+            log.warn("byte[] content or type is empty");
             return null;
         }
         try {

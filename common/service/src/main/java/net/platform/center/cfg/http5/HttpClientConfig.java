@@ -33,6 +33,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.Data;
@@ -49,13 +50,11 @@ import net.platform.center.exception.BusinessException;
 @Data
 @ConfigurationProperties(prefix = "http")
 public class HttpClientConfig {
-    private Integer maxTotal = 500;
+    private Integer maxTotal = 900;
 
     private Integer maxPerRoute = 300;
 
-    private Integer connectionTimeout = 10;
-
-    private Integer connectionRequestTimeout = 150;
+    private Integer connectionTimeout = 30;
 
     private Integer socketTimeout = 120;
 
@@ -80,7 +79,7 @@ public class HttpClientConfig {
 
             ConnectionConfig connectionConfig = ConnectionConfig.custom()
                 .setSocketTimeout(Timeout.ofSeconds(socketTimeout))
-                .setConnectTimeout(Timeout.ofSeconds(connectionRequestTimeout))
+                .setConnectTimeout(Timeout.ofSeconds(connectionTimeout))
                 .setTimeToLive(TimeValue.ofMinutes(10))
                 .build();
 
@@ -98,7 +97,7 @@ public class HttpClientConfig {
     @Bean
     public RequestConfig requestConfig() {
         return RequestConfig.custom()
-            .setConnectionRequestTimeout(Timeout.ofSeconds(connectionRequestTimeout))
+            .setConnectionRequestTimeout(Timeout.ofSeconds(connectionTimeout))
             .setResponseTimeout(Timeout.ofSeconds(socketTimeout))
             .build();
 
@@ -135,12 +134,28 @@ public class HttpClientConfig {
         return restTemplate;
     }
 
+    @Bean
+    public RestClient restClient(ClientHttpRequestFactory clientHttpRequestFactory,
+        List<ClientHttpRequestInterceptor> interceptors) {
+        return RestClient.builder()
+            .requestFactory(clientHttpRequestFactory)
+            .requestInterceptors(list ->list.addAll(this.moveLogInterceptor(interceptors)))
+            .messageConverters(list -> {
+                for (HttpMessageConverter<?> converter : list) {
+                    if (converter instanceof StringHttpMessageConverter stringHttpMessageConverter) {
+                        stringHttpMessageConverter.setDefaultCharset(StandardCharsets.UTF_8);
+                    }
+                }
+            })
+            .build();
+    }
+
     /**
      * 日志拦截器放到最后
      * 
      * @param interceptors 所有的拦截器
      */
-    private void moveLogInterceptor(List<ClientHttpRequestInterceptor> interceptors) {
+    private List<ClientHttpRequestInterceptor>  moveLogInterceptor(List<ClientHttpRequestInterceptor> interceptors) {
         HttpClientLogInterceptor logInterceptor = null;
         for (int i = 0; i < interceptors.size() - 1; i++) {
             if (interceptors.get(i) instanceof HttpClientLogInterceptor httpClientLogInterceptor) {
@@ -153,6 +168,7 @@ public class HttpClientConfig {
         if (logInterceptor != null) {
             interceptors.add(logInterceptor);
         }
+        return interceptors;
     }
 
     @Bean

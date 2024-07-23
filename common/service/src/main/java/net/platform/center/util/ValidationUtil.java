@@ -3,26 +3,33 @@ package net.platform.center.util;
 
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-
-import org.apache.commons.collections4.CollectionUtils;
+import jakarta.validation.ValidatorFactory;
 
 /**
- * @Author: jack
- * @Date: 2021/6/4 15:22
+ * @author jack
+ * @since 2021/6/4 15:22
  */
 
 public final class ValidationUtil {
-    private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private static final Validator VALIDATOR = buildValidator();
 
     private ValidationUtil() {
     }
 
+    private static Validator buildValidator() {
+        try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+            return validatorFactory.getValidator();
+        }
+    }
+
     public static Validator getValidator() {
-        return validator;
+        return VALIDATOR;
     }
 
     public static <T> Set<ConstraintViolation<T>> validate(T object, Class<?>... groups) {
@@ -35,4 +42,5 @@ public final class ValidationUtil {
             throw new ConstraintViolationException(result);
         }
     }
+
 }

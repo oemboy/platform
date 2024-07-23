@@ -11,8 +11,8 @@ import lombok.Data;
 import net.platform.center.bean.DfxSqlBean;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 @Data
 public class RuntimeContext {
@@ -27,7 +27,7 @@ public class RuntimeContext {
 
     private Map<String, Object> contextMap = new ConcurrentHashMap<>();
 
-    private Map<DfxSqlBean, String> dfxSqlBeanMap = new ConcurrentHashMap<>(16);
+    private Map<DfxSqlBean, String> dfxSqlBeanMap = new ConcurrentHashMap<>(32);
 
     private Deque<String> regions = new LinkedList<>();
 
