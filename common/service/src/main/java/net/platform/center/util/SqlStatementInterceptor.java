@@ -89,6 +89,7 @@ public class SqlStatementInterceptor implements Interceptor {
         DfxSqlBean contextSqlBean = showSqlOnceMore ? showDfxSql(args) : dfxSqlBean;
         if (contextSqlBean != null) {
             contextSqlBean.setTimeSpan(span);
+            ApplicationContextHolder.setDfxSql(dfxSqlBean);
         }
     }
 
@@ -122,7 +123,6 @@ public class SqlStatementInterceptor implements Interceptor {
             }
 
             dfxSqlBean = new DfxSqlBean(sqlId, boundSql.getSql(), sql);
-            ApplicationContextHolder.setDfxSql(dfxSqlBean);
         } catch (Exception e) {
             log.warn("SqlStatementInterceptor build sql with parameters error: {}", e.getMessage());
         }

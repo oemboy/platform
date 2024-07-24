@@ -4,6 +4,7 @@ package net.platform.center.bean;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +17,15 @@ import net.platform.center.util.DigestUtil;
  */
 
 @Slf4j
+@Data
 public class DfxSqlBean {
-    String sqlId;
+    private String sqlId;
 
-    String sqlIndex;
+    private String sqlIndex;
 
-    String sql;
+    private String sql;
 
-    long timeSpan;
+    private long timeSpan;
 
     public DfxSqlBean(String sqlId, String boundSql, String sql) {
         this.sqlId = sqlId;
@@ -45,26 +47,6 @@ public class DfxSqlBean {
             return boundSql;
         }
         return DfxFunction.formatStr(boundSql.replaceAll("[\\s]]+", " ")).toUpperCase();
-    }
-
-    public String getSqlId() {
-        return sqlId;
-    }
-
-    public String getSqlIndex() {
-        return sqlIndex;
-    }
-
-    public String getSql() {
-        return sql;
-    }
-
-    public long getTimeSpan() {
-        return timeSpan;
-    }
-
-    public void setTimeSpan(long timeSpan) {
-        this.timeSpan = timeSpan;
     }
 
     @Override
