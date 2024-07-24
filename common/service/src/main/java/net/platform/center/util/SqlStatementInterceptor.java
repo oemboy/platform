@@ -63,7 +63,13 @@ public class SqlStatementInterceptor implements Interceptor {
         final Object[] args = invocation.getArgs();
         long start = System.currentTimeMillis();
 
+        DfxSqlBean dfxSqlBean = null;
+        boolean showSqlFlag = false;
         try {
+            if (log.isDebugEnabled()) {
+                showSqlFlag = true;
+                dfxSqlBean = showDfxSql(args);
+            }
             return invocation.proceed();
         } finally {
             long span = System.currentTimeMillis() - start;
@@ -73,15 +79,16 @@ public class SqlStatementInterceptor implements Interceptor {
             } else {
                 // debug未打开时, 但是sql时间超长时, 依然记录sql
                 log.warn("sql cost too much time: {}", span);
-                setDfxSqlContext(args, span);
+                setDfxSqlContext(args, span, dfxSqlBean, showSqlFlag);
             }
         }
     }
 
-    private void setDfxSqlContext(Object[] args, long span) {
-        DfxSqlBean dfxSqlBean = showDfxSql(args);
-        if (dfxSqlBean != null) {
-            dfxSqlBean.setTimeSpan(span);
+    private void setDfxSqlContext(Object[] args, long span, DfxSqlBean dfxSqlBean, boolean showSqlFlag) {
+        boolean showSqlOnceMore = dfxSqlBean == null && !showSqlFlag;
+        DfxSqlBean contextSqlBean = showSqlOnceMore ? showDfxSql(args) : dfxSqlBean;
+        if (contextSqlBean != null) {
+            contextSqlBean.setTimeSpan(span);
         }
     }
 
