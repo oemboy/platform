@@ -7,7 +7,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.util.concurrent.ListenableFuture;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,12 +35,6 @@ public class VisibleThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
     }
 
     @Override
-    public ListenableFuture<?> submitListenable(Runnable task) {
-        showThreadPoolInfo("1. do submit Listenable");
-        return super.submitListenable(task);
-    }
-
-    @Override
     public <T> CompletableFuture<T> submitCompletable(Callable<T> task) {
         showThreadPoolInfo("1. do submit Callable Completable");
         return super.submitCompletable(task);
@@ -57,8 +50,8 @@ public class VisibleThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
         if (log.isDebugEnabled()) {
             ThreadPoolExecutor executor = getThreadPoolExecutor();
             log.debug("{}, {}, taskCount [{}], completedTaskCount [{}], activeCount [{}], queueSize [{}]",
-                    this.getThreadNamePrefix(), prefix, executor.getTaskCount(), executor.getCompletedTaskCount(),
-                    executor.getActiveCount(), executor.getQueue().size());
+                this.getThreadNamePrefix(), prefix, executor.getTaskCount(), executor.getCompletedTaskCount(),
+                executor.getActiveCount(), executor.getQueue().size());
         }
     }
 }
