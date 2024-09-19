@@ -17,8 +17,8 @@ import net.platform.center.util.LogUtil;
 import net.platform.kafka.bean.CommonMessage;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 @Slf4j
 public abstract class AbstractConsumer<T extends CommonMessage> {

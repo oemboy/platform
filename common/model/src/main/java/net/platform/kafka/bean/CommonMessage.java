@@ -4,10 +4,19 @@ package net.platform.kafka.bean;
 import java.util.Map;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 public interface CommonMessage {
+    /**
+     * 获取 Partition
+     *
+     * @return msg
+     */
+    default int getPartition() {
+        return -1;
+    }
+
     /**
      * 获取 kafka 消息 key
      * 
@@ -28,6 +37,13 @@ public interface CommonMessage {
      * @return msgType
      */
     String getMsgType();
+
+    /**
+     * 获取Topic
+     *
+     * @return msg
+     */
+    String getTopic();
 
     /**
      * 获取历史Topic

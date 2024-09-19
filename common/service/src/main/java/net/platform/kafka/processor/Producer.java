@@ -8,8 +8,8 @@ import org.apache.kafka.common.header.Header;
 import org.springframework.kafka.support.SendResult;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 public interface Producer<K, V> {
     org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(Producer.class);

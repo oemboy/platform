@@ -26,14 +26,6 @@ public class BusinessProducer implements Producer<Object, Object> {
     @NonNull
     private KafkaTemplate<Object, Object> kafkaTemplate;
 
-    public CompletableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message, String topic) {
-        setContextMap(message);
-        if (log.isDebugEnabled()) {
-            log.debug("writeMessage key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
-        }
-        return sendWithPartition(message.getKafkaKey(), message.getKafkaMessage(), topic, -1);
-    }
-
     private static void setContextMap(CommonMessage message) {
         String transIdo = LogUtil.getLogId();
         if (StringUtils.isNotEmpty(transIdo)) {
@@ -43,6 +35,18 @@ public class BusinessProducer implements Producer<Object, Object> {
         if (LogUtil.getDfxLogName() != null) {
             message.getContextMap().put(LogUtil.USE_DFX_LOG, LogUtil.getDfxLogName());
         }
+    }
+
+    public CompletableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message) {
+        return writeMessageByPartition(message, message.getTopic(), message.getPartition());
+    }
+
+    public CompletableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message, String topic) {
+        setContextMap(message);
+        if (log.isDebugEnabled()) {
+            log.debug("writeMessage key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
+        }
+        return sendWithPartition(message.getKafkaKey(), message.getKafkaMessage(), topic, message.getPartition());
     }
 
     public CompletableFuture<SendResult<Object, Object>> writeMessageByPartition(CommonMessage message, String topic,

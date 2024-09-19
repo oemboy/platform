@@ -37,8 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.platform.center.util.JsonUtil;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 @Slf4j
 public class KafkaAdminService {
