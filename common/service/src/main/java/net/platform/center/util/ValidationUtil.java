@@ -2,6 +2,7 @@
 package net.platform.center.util;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -39,8 +40,15 @@ public final class ValidationUtil {
     public static <T> void validateThrow(T object, Class<?>... groups) {
         Set<ConstraintViolation<T>> result = validate(object, groups);
         if (CollectionUtils.isNotEmpty(result)) {
-            throw new ConstraintViolationException(result);
+            throw new ConstraintViolationException(toString(result), result);
         }
+    }
+
+    private static String toString(Set<? extends ConstraintViolation<?>> constraintViolations) {
+        return constraintViolations.stream()
+            .map(cv -> cv == null ? "null"
+                : cv.getPropertyPath() + ": " + JsonUtil.toJson(cv.getInvalidValue()) + ": " + cv.getMessage())
+            .collect(Collectors.joining(", "));
     }
 
 }
