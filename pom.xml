@@ -14,9 +14,11 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <springdoc.version>2.6.0</springdoc.version>
-        <spring-boot.version>3.3.5</spring-boot.version>
-        <guava.version>32.1.3-jre</guava.version>
+        <spring-boot.version>3.3.6</spring-boot.version>
+        <groovy.version>4.0.24</groovy.version>
+        <guava.version>33.3.1-jre</guava.version>
         <docker-maven-version>0.45.1</docker-maven-version>
+        <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <commons-cli.version>1.9.0</commons-cli.version>
         <commons-lang3.version>3.16.0</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
@@ -24,7 +26,6 @@
         <commons-net.version>3.11.1</commons-net.version>
         <commons-compress.version>1.26.2</commons-compress.version>
         <mybatis.spring.boot.version>3.0.3</mybatis.spring.boot.version>
-        <groovy.version>4.0.23</groovy.version>
         <cosid.version>2.9.9</cosid.version>
         <jool.version>0.9.15</jool.version>
         <joor.version>0.9.15</joor.version>
@@ -33,17 +34,21 @@
         <pagehelper-starter.version>2.1.0</pagehelper-starter.version>
         <dom4j.version>2.1.3</dom4j.version>
         <redisson.version>3.27.2</redisson.version>
-        <jacoco.version>0.8.12</jacoco.version>
-        <h2.version>2.2.220</h2.version>
-        <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
-        <sonar.plugin.version>3.11.0.3922</sonar.plugin.version>
-        <sonar.test.exclusions>**/test/*</sonar.test.exclusions>
-        <sonar.projectKey>platform-jdk17</sonar.projectKey>
+        <!--PDM config-->
         <checkstyle.config.location>${devops.site}/checkstyle.xml</checkstyle.config.location>
         <excludeFilter.url>${devops.site}/findbugs-exclude-filter.xml</excludeFilter.url>
+        <!--lombok config-->
         <sourceDir>${origSourceDir}</sourceDir>
         <origSourceDir>${project.basedir}/src/main/java</origSourceDir>
         <delombokedSourceDir>${project.build.directory}/delombok</delombokedSourceDir>
+        <!--jacoco config-->
+        <jacoco.version>0.8.12</jacoco.version>
+        <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
+        <!--sonar config-->
+        <sonar.projectKey>platform-jdk17</sonar.projectKey>
+        <sonar.plugin.version>3.11.0.3922</sonar.plugin.version>
+        <sonar.test.exclusions>**/test/*</sonar.test.exclusions>
+        <sonar.cpd.exclusions>**/bean/**,**/test/**,**/generated/**</sonar.cpd.exclusions>
     </properties>
 
     <modules>
@@ -208,11 +213,6 @@
                 <version>${redisson.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>${h2.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>me.ahoo.cosid</groupId>
                 <artifactId>cosid-spring-redis</artifactId>
                 <version>${cosid.version}</version>
@@ -254,6 +254,16 @@
         <sourceDirectory>${sourceDir}</sourceDirectory>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>${flatten-maven-plugin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>

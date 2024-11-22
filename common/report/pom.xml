@@ -11,7 +11,7 @@
     </parent>
     <artifactId>common-report</artifactId>
     <name>common-report</name>
-    <description>order-report</description>
+    <description>common-report</description>
     <packaging>pom</packaging>
 
     <dependencies>
@@ -31,7 +31,6 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-
     <profiles>
         <profile>
             <id>coverage</id>
@@ -64,7 +63,6 @@
             </build>
         </profile>
     </profiles>
-
     <build>
         <plugins>
             <plugin>
