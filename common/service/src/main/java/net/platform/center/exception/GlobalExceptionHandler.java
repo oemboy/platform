@@ -23,6 +23,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -113,6 +114,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> exception(Exception ex, WebRequest request) {
         return exception(ex, new HttpHeaders(), HttpStatus.OK, request);
+    }
+
+    @ExceptionHandler(WebExchangeBindException.class)
+    public ResponseEntity<Object> webExchangeBindException(WebExchangeBindException ex) {
+        return this.exception(
+            new BusinessException(net.platform.center.exception.ExceptionEnum.ERR_PARAM_VALID,
+                ex.getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(","))),
+            new HttpHeaders(), HttpStatus.OK, null);
     }
 
     /**
