@@ -64,7 +64,7 @@ class CollectorUtilTest {
             .limit(10)
             .peek(System.out::println)
             .boxed()
-            .collect(toList());
+            .toList();
         assertEquals(10, collect.size());
     }
 }

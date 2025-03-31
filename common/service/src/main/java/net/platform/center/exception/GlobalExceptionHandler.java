@@ -159,8 +159,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> exception(Exception ex, HttpHeaders headers, HttpStatus status,
         WebRequest request) {
         final ResponseComponent respComp = ResponseComponent.builder()
-            .status(ObjectUtils.defaultIfNull(status, HttpStatus.OK))
-            .headers(ObjectUtils.defaultIfNull(headers, new HttpHeaders()))
+            .status(ObjectUtils.getIfNull(status, HttpStatus.OK))
+            .headers(ObjectUtils.getIfNull(headers, new HttpHeaders()))
             .request(request)
             .build();
         if (Objects.isNull(ex)) {
@@ -221,7 +221,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             respBody = resp;
         }
         log.error("Response Exception code:{}, message:{}, body:{}", code, message, JsonUtil.toJson(respBody));
-        return ResponseEntity.status(ObjectUtils.defaultIfNull(respComp.getStatus(), HttpStatus.OK))
+        return ResponseEntity.status(ObjectUtils.getIfNull(respComp.getStatus(), HttpStatus.OK))
             .headers(respComp.getHeaders())
             .body(respBody);
     }

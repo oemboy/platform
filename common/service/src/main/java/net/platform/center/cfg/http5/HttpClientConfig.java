@@ -17,9 +17,8 @@ import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
 import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.core5.util.TimeValue;
@@ -63,16 +62,14 @@ public class HttpClientConfig {
         try {
             final PoolingHttpClientConnectionManagerBuilder builder =
                 PoolingHttpClientConnectionManagerBuilder.create();
+
             final SSLContext sslContext =
                 new SSLContextBuilder().loadTrustMaterial(null, TrustAllStrategy.INSTANCE).build();
 
-            SSLConnectionSocketFactory socketFactory = SSLConnectionSocketFactoryBuilder.create()
-                .setSslContext(sslContext)
-                // .setTlsVersions(TLS.V_1_1, TLS.V_1_2, TLS.V_1_3
-                .setHostnameVerifier(NoopHostnameVerifier.INSTANCE)
-                .build();
+            DefaultClientTlsStrategy socketFactoryStrategy =
+                new DefaultClientTlsStrategy(sslContext, NoopHostnameVerifier.INSTANCE);
 
-            builder.setSSLSocketFactory(socketFactory);
+            builder.setTlsSocketStrategy(socketFactoryStrategy);
 
             builder.setMaxConnPerRoute(maxPerRoute);
             builder.setMaxConnTotal(maxTotal);
@@ -139,7 +136,7 @@ public class HttpClientConfig {
         List<ClientHttpRequestInterceptor> interceptors) {
         return RestClient.builder()
             .requestFactory(clientHttpRequestFactory)
-            .requestInterceptors(list ->list.addAll(this.moveLogInterceptor(interceptors)))
+            .requestInterceptors(list -> list.addAll(this.moveLogInterceptor(interceptors)))
             .messageConverters(list -> {
                 for (HttpMessageConverter<?> converter : list) {
                     if (converter instanceof StringHttpMessageConverter stringHttpMessageConverter) {
@@ -155,7 +152,7 @@ public class HttpClientConfig {
      * 
      * @param interceptors 所有的拦截器
      */
-    private List<ClientHttpRequestInterceptor>  moveLogInterceptor(List<ClientHttpRequestInterceptor> interceptors) {
+    private List<ClientHttpRequestInterceptor> moveLogInterceptor(List<ClientHttpRequestInterceptor> interceptors) {
         HttpClientLogInterceptor logInterceptor = null;
         for (int i = 0; i < interceptors.size() - 1; i++) {
             if (interceptors.get(i) instanceof HttpClientLogInterceptor httpClientLogInterceptor) {

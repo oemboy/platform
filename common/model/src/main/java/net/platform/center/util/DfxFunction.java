@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * @author bing zi
@@ -32,7 +33,7 @@ public interface DfxFunction {
             return source;
         }
 
-        return Arrays.stream(StringUtils.replace(source, "\r\n", "\n").split("\n"))
+        return Arrays.stream( Strings.CS.replace(source, "\r\n", "\n").split("\n"))
             .filter(StringUtils::isNotBlank)
             .collect(Collectors.joining(System.lineSeparator()));
     }
