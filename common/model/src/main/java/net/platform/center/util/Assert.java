@@ -11,6 +11,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import net.platform.center.exception.BusinessException;
 import net.platform.center.exception.ExceptionCode;
@@ -136,7 +137,7 @@ public final class Assert {
      */
     public static void doesNotContain(@Nullable String textToSearch, String substring, ExceptionCode code,
         Object... args) {
-        if (StringUtils.contains(textToSearch,substring)) {
+        if (Strings.CS.contains(textToSearch, substring)) {
             throw new BusinessException(code, args);
         }
     }
