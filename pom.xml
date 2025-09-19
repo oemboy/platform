@@ -14,8 +14,8 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <springdoc.version>2.6.0</springdoc.version>
-        <spring-boot.version>3.4.9</spring-boot.version>
-        <groovy.version>4.0.28</groovy.version>
+        <spring-boot.version>3.4.11</spring-boot.version>
+        <groovy.version>4.0.29</groovy.version>
         <guava.version>33.3.1-jre</guava.version>
         <docker-maven-version>0.46.0</docker-maven-version>
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
@@ -301,7 +301,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.13.0</version>
+                    <version>3.14.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
