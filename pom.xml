@@ -14,10 +14,10 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <springdoc.version>2.6.0</springdoc.version>
-        <spring-boot.version>3.4.11</spring-boot.version>
+        <spring-boot.version>3.4.12</spring-boot.version>
         <groovy.version>4.0.29</groovy.version>
-        <guava.version>33.3.1-jre</guava.version>
-        <docker-maven-version>0.46.0</docker-maven-version>
+        <guava.version>33.4.8-jre</guava.version>
+        <docker-maven-version>0.48.0</docker-maven-version>
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <commons-cli.version>1.9.0</commons-cli.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
@@ -26,7 +26,7 @@
         <commons-net.version>3.11.1</commons-net.version>
         <commons-compress.version>1.26.2</commons-compress.version>
         <mybatis.spring.boot.version>3.0.4</mybatis.spring.boot.version>
-        <cosid.version>2.9.9</cosid.version>
+        <cosid.version>2.9.10</cosid.version>
         <jool.version>0.9.15</jool.version>
         <joor.version>0.9.15</joor.version>
         <skywalking.version>9.7.0</skywalking.version>
