@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.platform.center</groupId>
     <artifactId>center</artifactId>
-    <version>platform-jdk17-2025.08-SNAPSHOT</version>
+    <version>platform-jdk17-2026.01-SNAPSHOT</version>
     <name>center</name>
     <packaging>pom</packaging>
     <description>platform project pom</description>
@@ -13,8 +13,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <springdoc.version>2.6.0</springdoc.version>
-        <spring-boot.version>3.4.12</spring-boot.version>
+        <springdoc.version>2.8.14</springdoc.version>
+        <spring-boot.version>3.5.10</spring-boot.version>
         <groovy.version>4.0.29</groovy.version>
         <guava.version>33.4.8-jre</guava.version>
         <docker-maven-version>0.48.0</docker-maven-version>
@@ -25,14 +25,14 @@
         <commons-io.version>2.16.1</commons-io.version>
         <commons-net.version>3.11.1</commons-net.version>
         <commons-compress.version>1.26.2</commons-compress.version>
-        <mybatis.spring.boot.version>3.0.4</mybatis.spring.boot.version>
-        <cosid.version>2.9.10</cosid.version>
+        <mybatis.spring.boot.version>3.0.5</mybatis.spring.boot.version>
+        <cosid.version>2.15.1</cosid.version>
         <jool.version>0.9.15</jool.version>
         <joor.version>0.9.15</joor.version>
         <skywalking.version>9.7.0</skywalking.version>
-        <pagehelper-starter.version>2.1.0</pagehelper-starter.version>
+        <pagehelper-starter.version>2.1.1</pagehelper-starter.version>
         <dom4j.version>2.1.3</dom4j.version>
-        <redisson.version>3.47.0</redisson.version>
+        <redisson.version>3.52.0</redisson.version>
         <!--PDM config-->
         <checkstyle.config.location>${devops.site}/checkstyle.xml</checkstyle.config.location>
         <excludeFilter.url>${devops.site}/findbugs-exclude-filter.xml</excludeFilter.url>
@@ -41,7 +41,7 @@
         <origSourceDir>${project.basedir}/src/main/java</origSourceDir>
         <delombokedSourceDir>${project.build.directory}/delombok</delombokedSourceDir>
         <!--jacoco config-->
-        <jacoco.version>0.8.12</jacoco.version>
+        <jacoco.version>0.8.14</jacoco.version>
         <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
         <!--sonar config-->
         <sonar.projectKey>platform-jdk17</sonar.projectKey>
@@ -266,7 +266,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -326,7 +326,7 @@
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.7.3.6</version>
+                    <version>4.9.8.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -358,16 +358,38 @@
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>3.7.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.openrewrite.maven</groupId>
+                    <artifactId>rewrite-maven-plugin</artifactId>
+                    <version>6.26.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
             <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <configuration>
+                    <activeRecipes>
+                        <recipe>org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_5</recipe>
+                    </activeRecipes>
+                    <exclusions>
+                      <exclusion>${project.build.directory}/delombok/**</exclusion>
+                    </exclusions>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-spring</artifactId>
+                        <version>6.21.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
                     <encoding>UTF-8</encoding>
                     <verbose>true</verbose>
                     <showWarnings>true</showWarnings>
@@ -375,6 +397,7 @@
                         <arg>-Xlint:unchecked</arg>
                         <arg>-Xlint:deprecation</arg>
                     </compilerArgs>
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
             <!-- findbugs插件 ：静态检查代码的错误-->
@@ -484,6 +507,7 @@
             </plugin>
         </plugins>
     </build>
+
     <distributionManagement>
         <repository>
             <id>releases</id>

@@ -5,14 +5,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.annotation.Nullable;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jetbrains.annotations.Contract;
 
+import jakarta.annotation.Nullable;
 import net.platform.center.exception.BusinessException;
 import net.platform.center.exception.ExceptionCode;
 
@@ -25,48 +25,21 @@ public final class Assert {
     private Assert() {
     }
 
-    /**
-     * Assert a boolean expression, throwing an {@code BusinessException}
-     * if the expression evaluates to {@code false}.
-     * <p>
-     * Call {@link #isTrue} if you wish to throw an {@code BusinessException}
-     * on an assertion failure.
-     *
-     * @param expression a boolean expression
-     * @param code the exception message to use if the assertion fails
-     * @throws BusinessException if {@code expression} is {@code false}
-     */
+    @Contract("false, _, _ -> fail")
     public static void state(boolean expression, ExceptionCode code, Object... args) {
         if (!expression) {
             throw new BusinessException(code, args);
         }
     }
 
-    /**
-     * Assert a boolean expression, throwing an {@code BusinessException}
-     * if the expression evaluates to {@code false}.
-     *
-     * @param expression a boolean expression
-     * @param code the exception message to use if the assertion fails
-     * @throws BusinessException if {@code expression} is {@code false}
-     */
+    @Contract("false, _, _ -> fail")
     public static void isTrue(boolean expression, ExceptionCode code, Object... args) {
         if (!expression) {
             throw new BusinessException(code, args);
         }
     }
 
-    /**
-     * Assert that an object is {@code null}.
-     * 
-     * <pre class="code">
-     * Assert.isNull(value, "The value must be null");
-     * </pre>
-     *
-     * @param object the object to check
-     * @param code the exception message to use if the assertion fails
-     * @throws BusinessException if the object is not {@code null}
-     */
+    @Contract("!null, _, _ -> fail")
     public static void isNull(@Nullable Object object, ExceptionCode code, Object... args) {
         if (object != null) {
             throw new BusinessException(code, args);
@@ -80,6 +53,7 @@ public final class Assert {
      * @param code the exception message to use if the assertion fails
      * @throws BusinessException if the object is {@code null}
      */
+    @Contract("null, _, _ -> fail")
     public static void notNull(@Nullable Object object, ExceptionCode code, Object... args) {
         if (object == null) {
             throw new BusinessException(code, args);
@@ -142,18 +116,7 @@ public final class Assert {
         }
     }
 
-    /**
-     * Assert that an array contains elements; that is, it must not be
-     * {@code null} and must contain at least one element.
-     * 
-     * <pre class="code">
-     * Assert.notEmpty(array, "The array must contain elements");
-     * </pre>
-     *
-     * @param array the array to check
-     * @param code the exception message to use if the assertion fails
-     * @throws BusinessException if the object array is {@code null} or contains no elements
-     */
+    @Contract("null, _, _ -> fail")
     public static void notEmpty(@Nullable Object[] array, ExceptionCode code, Object... args) {
         if (ObjectUtils.isEmpty(array)) {
             throw new BusinessException(code, args);
@@ -183,19 +146,7 @@ public final class Assert {
         }
     }
 
-    /**
-     * Assert that a collection contains elements; that is, it must not be
-     * {@code null} and must contain at least one element.
-     * 
-     * <pre class="code">
-     * Assert.notEmpty(collection, "Collection must contain elements");
-     * </pre>
-     *
-     * @param collection the collection to check
-     * @param code the exception message to use if the assertion fails
-     * @throws BusinessException if the collection is {@code null} or
-     *         contains no elements
-     */
+    @Contract("null, _, _ -> fail")
     public static void notEmpty(@Nullable Collection<?> collection, ExceptionCode code, Object... args) {
         if (CollectionUtils.isEmpty(collection)) {
             throw new BusinessException(code, args);
@@ -226,18 +177,7 @@ public final class Assert {
         }
     }
 
-    /**
-     * Assert that a Map contains entries; that is, it must not be {@code null}
-     * and must contain at least one entry.
-     * 
-     * <pre class="code">
-     * Assert.notEmpty(map, "Map must contain entries");
-     * </pre>
-     *
-     * @param map the map to check
-     * @param code the exception message to use if the assertion fails
-     * @throws BusinessException if the map is {@code null} or contains no entries
-     */
+    @Contract("null, _, _ -> fail")
     public static void notEmpty(@Nullable Map<?, ?> map, ExceptionCode code, Object... args) {
         if (MapUtils.isEmpty(map)) {
             throw new BusinessException(code, args);

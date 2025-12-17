@@ -1,18 +1,16 @@
+
 package net.platform.flow;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.params.ParameterizedTest;
 
+import groovy.lang.GroovyShell;
 import net.platform.center.test.ResourceFile;
 import net.platform.flow.process.DefaultFlowContext;
 import net.platform.flow.process.Flow;
 import net.platform.flow.process.FlowContext;
 import net.platform.flow.process.FlowGroovyShell;
-import org.junit.jupiter.params.ParameterizedTest;
-
-
-import groovy.lang.GroovyShell;
-
 
 class FlowTest {
     private GroovyShell shell = new FlowGroovyShell();

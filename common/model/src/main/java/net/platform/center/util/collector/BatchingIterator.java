@@ -12,8 +12,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * @Author: bing zi
- * @Date: 2021/8/3 14:27
+ * @author bing zi
+ * @since 2021/8/3 14:27
  */
 public class BatchingIterator<T, C extends Collection<T>> implements Iterator<C> {
 
@@ -42,22 +42,33 @@ public class BatchingIterator<T, C extends Collection<T>> implements Iterator<C>
 
     @Override
     public boolean hasNext() {
-        prepareNextBatch();
-        return currentBatch != null && !currentBatch.isEmpty();
+        // 如果 currentBatch 已经被 next() 消费（置 null），则尝试加载下一批
+        if (currentBatch == null) {
+            prepareNextBatch();
+        }
+        return currentBatch != null;
     }
 
     @Override
     public C next() {
-        if (currentBatch == null || currentBatch.isEmpty()) {
+        if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        return currentBatch;
+        C batch = currentBatch;
+        currentBatch = null;
+        return batch;
     }
 
     private void prepareNextBatch() {
-        currentBatch = supplier.get();
-        while (sourceIterator.hasNext() && currentBatch.size() < batchSize) {
-            currentBatch.add(sourceIterator.next());
+        if (!sourceIterator.hasNext()) {
+            this.currentBatch = null;
+            return;
         }
+
+        C batch = supplier.get();
+        while (sourceIterator.hasNext() && batch.size() < batchSize) {
+            batch.add(sourceIterator.next());
+        }
+        this.currentBatch = batch.isEmpty() ? null : batch;
     }
 }

@@ -11,19 +11,26 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 
 @Getter
 @Setter
 @ToString
 public class CommonResp {
-    private String logId = StringUtils.stripToEmpty(MDC.get(TRANS_IDO));
+    private String logId;
 
     private String code = "1";
 
     private String message = "success";
+
+    public String getLogId() {
+        if (logId == null) {
+            this.logId = StringUtils.stripToEmpty(MDC.get(TRANS_IDO));
+        }
+        return logId;
+    }
 
     public static void setErrRsp(CommonResp errRsp, String errMsg) {
         errRsp.setCode("0");

@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * @Author: bing zi
- * @Date: 2021/8/3 14:27
+ * @author bing zi
+ * @since 2021/8/3 14:27
  */
 class CollectorUtilTest {
 
@@ -31,12 +31,19 @@ class CollectorUtilTest {
     }
 
     @Test
-    void batches() {
-        Stream<Collection<String>> batches =
-            BatchSpliterator.batches(buildList().stream(), 2, ArrayList::new, toList());
+    void batchesSupplier() {
+        Stream<Collection<String>> batches = BatchSpliterator.batches(buildList().stream(), 2, ArrayList::new);
         Assertions.assertEquals(2L, batches
             // .peek(System.out::println)
             .count());
+    }
+
+    @Test
+    void batchesCollector() {
+        Stream<List<String>> batches = BatchSpliterator.batches(buildList().stream(), 2, toList());
+        Assertions.assertEquals(2L, batches
+                // .peek(System.out::println)
+                .count());
     }
 
     @Test

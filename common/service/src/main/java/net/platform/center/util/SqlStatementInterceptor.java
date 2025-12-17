@@ -1,8 +1,9 @@
 
 package net.platform.center.util;
 
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
@@ -54,6 +55,9 @@ public class SqlStatementInterceptor implements Interceptor {
 
     public static final String DEFAULT_SKIP_SQL = "recordDfxSql";
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+
     private final Set<String> skipSqlSet = new HashSet<>(8);
 
     private long timeLimit = TIME_THRESHOLD;
@@ -103,7 +107,7 @@ public class SqlStatementInterceptor implements Interceptor {
             MappedStatement mappedStatement = (MappedStatement) args[0];
             String sqlId = mappedStatement.getId();
 
-            // 无需打印的sqlId
+            // 无需打印的 sqlId
             if (skipSqlSet.stream().anyMatch(sqlId::contains)) {
                 return null;
             }
@@ -134,9 +138,10 @@ public class SqlStatementInterceptor implements Interceptor {
         if (obj instanceof String) {
             value = "'" + obj + "'";
         } else if (obj instanceof Date date) {
-            value = "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date) + "'";
+            Instant instant = Instant.ofEpochMilli(date.getTime());
+            value = "'" + DATE_TIME_FORMATTER.format(instant) + "'";
         } else if (obj instanceof LocalDateTime date) {
-            value = "'" + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "'";
+            value = "'" + date.format(DATE_TIME_FORMATTER) + "'";
         } else if (obj instanceof Number num) {
             value = num.toString();
         } else {
@@ -151,27 +156,58 @@ public class SqlStatementInterceptor implements Interceptor {
 
     public String showSql(Configuration configuration, Object parameter, BoundSql boundSql) {
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
-        String sql = boundSql.getSql().replaceAll("[\\s]]+", " ");
+
+        String sql = boundSql.getSql().replaceAll("\\s+", " ");
+        int totalParams = 0;
+
         try {
             if (CollectionUtils.isNotEmpty(parameterMappings) && parameter != null) {
                 TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
                 if (typeHandlerRegistry.hasTypeHandler(parameter.getClass())) {
+                    // 统计单参数
+                    totalParams++;
                     sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(parameter)));
                 } else {
+                    StringBuilder sb = new StringBuilder();
+                    int lastPos = 0;
+                    int mappingIndex = 0;
                     MetaObject metaObject = configuration.newMetaObject(parameter);
-                    for (ParameterMapping parameterMapping : parameterMappings) {
-                        String name = parameterMapping.getProperty();
-                        if (metaObject.hasGetter(name)) {
-                            Object obj = metaObject.getValue(name);
-                            sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
-                        } else if (boundSql.hasAdditionalParameter(name)) {
-                            Object obj = boundSql.getAdditionalParameter(name);
-                            sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
-                        } else {
-                            sql = sql.replaceFirst("\\?", "缺失");
+
+                    while (true) {
+                        int currentPos = sql.indexOf("?", lastPos);
+                        if (currentPos == -1 || mappingIndex >= parameterMappings.size()) {
+                            break;
                         }
+                        sb.append(sql, lastPos, currentPos);
+
+                        ParameterMapping parameterMapping = parameterMappings.get(mappingIndex++);
+                        String name = parameterMapping.getProperty();
+                        Object obj;
+                        if (metaObject.hasGetter(name)) {
+                            obj = metaObject.getValue(name);
+                        } else if (boundSql.hasAdditionalParameter(name)) {
+                            obj = boundSql.getAdditionalParameter(name);
+                        } else {
+                            sb.append("缺失");
+                            lastPos = currentPos + 1;
+                            continue;
+                        }
+
+                        if (obj != null) {
+                            totalParams++;
+                        }
+
+                        sb.append(getParameterValue(obj));
+                        lastPos = currentPos + 1;
                     }
+                    sb.append(sql.substring(lastPos));
+                    sql = sb.toString();
                 }
+            }
+
+            // 参数过多打一条 WARN
+            if (totalParams > 500) {
+                log.warn("【SQL审计】检测到潜在错误查询! , 参数总数: {}", totalParams);
             }
             return DfxFunction.formatStr(StringUtils.trim(sql));
         } catch (Exception e) {
