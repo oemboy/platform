@@ -14,6 +14,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
@@ -23,9 +24,11 @@ import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -38,6 +41,7 @@ import org.springframework.web.client.RestTemplate;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.platform.center.exception.BusinessException;
+import net.platform.center.util.RestClientUtil;
 
 /**
  * @author bing zi
@@ -81,7 +85,6 @@ public class HttpClientConfig {
                 .build();
 
             builder.setDefaultConnectionConfig(connectionConfig);
-
             return builder.build();
 
         } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
@@ -97,17 +100,17 @@ public class HttpClientConfig {
             .setConnectionRequestTimeout(Timeout.ofSeconds(connectionTimeout))
             .setResponseTimeout(Timeout.ofSeconds(socketTimeout))
             .build();
-
     }
 
     @Bean
     public HttpClient httpClient(PoolingHttpClientConnectionManager httpClientConnectionManager,
         RequestConfig requestConfig) {
-        return HttpClients.custom()
-            .setConnectionManager(httpClientConnectionManager)
-            .setDefaultRequestConfig(requestConfig)
-            .build();
 
+        HttpClientBuilder builder = HttpClients.custom()
+            .setConnectionManager(httpClientConnectionManager)
+            .setDefaultRequestConfig(requestConfig);
+
+        return builder.build();
     }
 
     @Bean
@@ -120,18 +123,20 @@ public class HttpClientConfig {
         List<ClientHttpRequestInterceptor> interceptors) {
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
         List<HttpMessageConverter<?>> list = restTemplate.getMessageConverters();
+        log.info("正在构建 RestTemplate, 当前转换器数量: {}", list.size());
+        list.forEach(c -> log.info("RestTemplate转换器: {}", c.getClass().getSimpleName()));
         for (HttpMessageConverter<?> converter : list) {
             if (converter instanceof StringHttpMessageConverter stringHttpMessageConverter) {
                 stringHttpMessageConverter.setDefaultCharset(StandardCharsets.UTF_8);
             }
         }
-
         moveLogInterceptor(interceptors);
         restTemplate.getInterceptors().addAll(interceptors);
         return restTemplate;
     }
 
     @Bean
+    @Primary
     public RestClient restClient(ClientHttpRequestFactory clientHttpRequestFactory,
         List<ClientHttpRequestInterceptor> interceptors) {
         return RestClient.builder()
@@ -143,8 +148,17 @@ public class HttpClientConfig {
                         stringHttpMessageConverter.setDefaultCharset(StandardCharsets.UTF_8);
                     }
                 }
+                log.info("正在构建 RestClient, 当前转换器数量: {}", list.size());
+                list.forEach(c -> log.info("RestClient转换器: {}", c.getClass().getSimpleName()));
             })
             .build();
+    }
+
+    @Bean("proxyRestClient")
+    public RestClient proxyRestClient(RestClient restClient, PoolingHttpClientConnectionManager poolingManager,
+        RequestConfig requestConfig, ObjectProvider<ProxyProvider> provider) {
+        // 这里传入的 provider 在请求时才会触发
+        return RestClientUtil.custom(restClient, poolingManager, requestConfig, provider.getIfAvailable());
     }
 
     /**
@@ -153,11 +167,20 @@ public class HttpClientConfig {
      * @param interceptors 所有的拦截器
      */
     private List<ClientHttpRequestInterceptor> moveLogInterceptor(List<ClientHttpRequestInterceptor> interceptors) {
+        if (interceptors == null || interceptors.isEmpty()) {
+            return interceptors;
+        }
+
+        // 1. 检查最后一个元素是不是已经是我们要的日志拦截器
+        if (interceptors.get(interceptors.size() - 1) instanceof HttpClientLogInterceptor) {
+            return interceptors;
+        }
+
+        // 2. 如果最后一位不是，则去前面找并移动, 只处理一个日志拦截器,多个不支持
         HttpClientLogInterceptor logInterceptor = null;
-        for (int i = 0; i < interceptors.size() - 1; i++) {
-            if (interceptors.get(i) instanceof HttpClientLogInterceptor httpClientLogInterceptor) {
-                logInterceptor = httpClientLogInterceptor;
-                interceptors.remove(i);
+        for (int i = 0; i < interceptors.size() - 1; i++) { // 只需找倒数第二个及以前的
+            if (interceptors.get(i) instanceof HttpClientLogInterceptor) {
+                logInterceptor = (HttpClientLogInterceptor) interceptors.remove(i);
                 break;
             }
         }

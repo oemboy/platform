@@ -21,8 +21,8 @@ import org.springframework.util.StreamUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @Author: bing zi
- * @Date: 2021/8/31
+ * @author bing zi
+ * @since 2021/8/31
  */
 
 @Slf4j
