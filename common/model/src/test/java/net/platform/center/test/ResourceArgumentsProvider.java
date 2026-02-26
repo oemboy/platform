@@ -1,14 +1,9 @@
 
 package net.platform.center.test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
-import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,82 +14,67 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
 import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.Preconditions;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.platform.center.util.JsonUtil;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
- * @Author: bing zi
- * @Date: 2021/8/3 14:27
+ * @author bing zi
+ * @since 2021/8/3 14:27
  */
 @Slf4j
 public class ResourceArgumentsProvider implements ArgumentsProvider, AnnotationConsumer<ResourceFile> {
-    private final BiFunction<Class<?>, String, InputStream> inputStreamBiFunction;
-
     private String[] resources;
 
     private Charset charset;
 
-    private Class<?> clazz;
-
-    public ResourceArgumentsProvider() {
-        this(Class::getResourceAsStream);
-    }
-
-    public ResourceArgumentsProvider(BiFunction<Class<?>, String, InputStream> inputStreamBiFunction) {
-        this.inputStreamBiFunction = inputStreamBiFunction;
-    }
+    private Class<?> targetType;
 
     @Override
     public void accept(ResourceFile resourceFile) {
         this.resources = resourceFile.resources();
-        this.clazz = resourceFile.type();
-        try {
-            this.charset = Charset.forName(resourceFile.encoding());
-        } catch (UnsupportedCharsetException e) {
-            throw new JUnitException("the charset is illegal!");
-        }
-
+        this.targetType = resourceFile.type();
+        this.charset = Charset.forName(resourceFile.encoding());
     }
 
     @Override
-    public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
-        return Arrays.stream(resources)
-            .map(resource -> openInputStream(extensionContext, resource))
-            .flatMap(this::toStream);
+    public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+        Class<?> testClass = context.getRequiredTestClass();
+        return Arrays.stream(resources).map(path -> Arguments.of(loadResource(testClass, path)));
     }
 
-    private InputStream openInputStream(ExtensionContext extensionContext, String resource) {
-        Preconditions.notBlank(resource, "[" + resource + "] must not be blank or null");
-        Class<?> cla = extensionContext.getRequiredTestClass();
-        return Preconditions.notNull(inputStreamBiFunction.apply(cla, resource),
-            () -> "ClassPath resource [" + resource + "] is not exist");
-    }
-
-    private Stream<Arguments> toStream(InputStream inputStream) {
-        String str = readResource(inputStream);
-        if (String.class.equals(clazz)) {
-            return Stream.of(Arguments.of(StringUtils.trim(str)));
-        } else if (JsonNode.class.equals(clazz)) {
-            return Stream.of(Arguments.of(JsonUtil.readJsonNode(str)));
-        } else {
-            return Stream.of(Arguments.of(JsonUtil.readValue(str, clazz)));
+    @SneakyThrows
+    private Object loadResource(Class<?> testClass, String path) {
+        Preconditions.notBlank(path, "Resource path must not be blank");
+        // 获取原始输入流
+        InputStream is = testClass.getResourceAsStream(path);
+        if (is == null) {
+            throw new JUnitException("Resource not found: " + path);
         }
-    }
 
-    private String readResource(InputStream inputStream) {
-        StringBuilder builder = new StringBuilder(512);
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, charset))) {
-            String line = reader.readLine();
-            while (line != null) {
-                builder.append(line).append(System.lineSeparator());
-                line = reader.readLine();
+        // 1. 如果想要的是 InputStream，直接返回流（注意：调用方需要负责关闭流）
+        if (InputStream.class.isAssignableFrom(targetType)) {
+            return is;
+        }
+
+        // 2. 对于其他类型，我们需要读取内容后关闭流
+        try (is) {
+            // 如果想要字节数组（处理 PDF/二进制文件但不想用流时）
+            if (byte[].class.equals(targetType)) {
+                return is.readAllBytes();
             }
-        } catch (IOException e) {
-            log.error("read resource file error!");
-            throw new JUnitException("read resource file error!");
+
+            // 如果是 String 或 JSON 相关转换
+            String rawContent = new String(is.readAllBytes(), charset);
+
+            return switch (targetType.getName()) {
+                case "java.lang.String" -> StringUtils.trim(rawContent);
+                case "com.fasterxml.jackson.databind.JsonNode" -> JsonUtil.readJsonNode(rawContent);
+                default -> JsonUtil.readValue(rawContent, targetType);
+            };
+        } catch (Exception e) {
+            log.error("Error processing resource file: {}", path, e);
+            throw new JUnitException("Failed to process resource: " + path, e);
         }
-        return builder.toString();
     }
 }
