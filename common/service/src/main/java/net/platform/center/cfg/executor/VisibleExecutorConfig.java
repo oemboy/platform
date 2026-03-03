@@ -7,28 +7,47 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
-@Configuration(proxyBeanMethods = false)
+
 @Slf4j
 @Data
+@Configuration(proxyBeanMethods = false)
 @ConfigurationProperties(prefix = "spring.visible")
 public class VisibleExecutorConfig {
 
     private Executor executor;
 
     private Exclude exclude;
+
+    @Bean
+    @ConditionalOnMissingBean(TaskDecorator.class)
+    public TaskDecorator taskDecorator() {
+        return new ContextCopyDecorator(exclude);
+    }
+
+    @Bean("contextScheduler")
+    public ThreadPoolTaskScheduler contextScheduler(TaskDecorator taskDecorator) {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setTaskDecorator(taskDecorator);
+        scheduler.setPoolSize(1);
+        scheduler.setThreadNamePrefix("context-scheduler-");
+        scheduler.setRemoveOnCancelPolicy(true);
+        return scheduler;
+    }
 
     @Bean("visibleExecutor")
     public ThreadPoolTaskExecutor threadPoolExecutor(@Autowired(required = false) TaskDecorator decorator,
