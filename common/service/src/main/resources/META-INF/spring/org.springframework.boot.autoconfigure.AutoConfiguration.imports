@@ -1,0 +1,3 @@
+net.platform.center.cfg.executor.VisibleExecutorAutoConfiguration
+net.platform.center.cfg.http5.HttpClientAutoConfiguration
+net.platform.center.cfg.redis.RedisCustomAutoConfiguration

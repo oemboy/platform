@@ -9,7 +9,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.support.MessageBuilder;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.platform.center.util.LogUtil;
@@ -21,10 +20,8 @@ import net.platform.kafka.bean.CommonMessage;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class BusinessProducer implements Producer<Object, Object> {
-
-    @NonNull
-    private KafkaTemplate<Object, Object> kafkaTemplate;
+public class BusinessProducer implements Producer<String, Object> {
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private static void setContextMap(CommonMessage message) {
         String transIdo = LogUtil.getLogId();
@@ -37,11 +34,11 @@ public class BusinessProducer implements Producer<Object, Object> {
         }
     }
 
-    public CompletableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message) {
+    public CompletableFuture<SendResult<String, Object>> writeMessage(CommonMessage message) {
         return writeMessageByPartition(message, message.getTopic(), message.getPartition());
     }
 
-    public CompletableFuture<SendResult<Object, Object>> writeMessage(CommonMessage message, String topic) {
+    public CompletableFuture<SendResult<String, Object>> writeMessage(CommonMessage message, String topic) {
         setContextMap(message);
         if (log.isDebugEnabled()) {
             log.debug("writeMessage key: {}, value: {}", message.getKafkaKey(), message.getKafkaMessage());
@@ -49,7 +46,7 @@ public class BusinessProducer implements Producer<Object, Object> {
         return sendWithPartition(message.getKafkaKey(), message.getKafkaMessage(), topic, message.getPartition());
     }
 
-    public CompletableFuture<SendResult<Object, Object>> writeMessageByPartition(CommonMessage message, String topic,
+    public CompletableFuture<SendResult<String, Object>> writeMessageByPartition(CommonMessage message, String topic,
         int partition) {
         setContextMap(message);
         if (log.isDebugEnabled()) {
@@ -58,7 +55,7 @@ public class BusinessProducer implements Producer<Object, Object> {
         return sendWithPartition(message.getKafkaKey(), message.getKafkaMessage(), topic, partition);
     }
 
-    private CompletableFuture<SendResult<Object, Object>> sendWithPartition(String key, String payload, String topic,
+    private CompletableFuture<SendResult<String, Object>> sendWithPartition(String key, String payload, String topic,
         int partition) {
         final MessageBuilder<String> builder =
             MessageBuilder.withPayload(payload).setHeader(KafkaHeaders.KEY, key).setHeader(KafkaHeaders.TOPIC, topic);

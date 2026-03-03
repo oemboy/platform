@@ -25,9 +25,12 @@ import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -38,7 +41,6 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.platform.center.exception.BusinessException;
 import net.platform.center.util.RestClientUtil;
@@ -48,20 +50,21 @@ import net.platform.center.util.RestClientUtil;
  * @since 2021/6/4 15:22
  */
 
-@Configuration
 @Slf4j
-@Data
-@ConfigurationProperties(prefix = "http")
-public class HttpClientConfig {
-    private Integer maxTotal = 900;
+@AutoConfiguration
+@ConditionalOnClass({HttpClient.class, RestClient.class})
+@EnableConfigurationProperties(HttpClientProperties.class)
+@ConditionalOnProperty(prefix = "http", name = "enabled", havingValue = "true", matchIfMissing = true)
+public class HttpClientAutoConfiguration {
 
-    private Integer maxPerRoute = 300;
+    private final HttpClientProperties properties;
 
-    private Integer connectionTimeout = 30;
-
-    private Integer socketTimeout = 120;
+    public HttpClientAutoConfiguration(HttpClientProperties properties) {
+        this.properties = properties;
+    }
 
     @Bean
+    @ConditionalOnMissingBean
     public PoolingHttpClientConnectionManager httpClientConnectionManager() {
         try {
             final PoolingHttpClientConnectionManagerBuilder builder =
@@ -75,12 +78,12 @@ public class HttpClientConfig {
 
             builder.setTlsSocketStrategy(socketFactoryStrategy);
 
-            builder.setMaxConnPerRoute(maxPerRoute);
-            builder.setMaxConnTotal(maxTotal);
+            builder.setMaxConnPerRoute(properties.getMaxPerRoute());
+            builder.setMaxConnTotal(properties.getMaxTotal());
 
             ConnectionConfig connectionConfig = ConnectionConfig.custom()
-                .setSocketTimeout(Timeout.ofSeconds(socketTimeout))
-                .setConnectTimeout(Timeout.ofSeconds(connectionTimeout))
+                .setSocketTimeout(Timeout.ofSeconds(properties.getSocketTimeout()))
+                .setConnectTimeout(Timeout.ofSeconds(properties.getConnectionTimeout()))
                 .setTimeToLive(TimeValue.ofMinutes(10))
                 .build();
 
@@ -95,14 +98,16 @@ public class HttpClientConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public RequestConfig requestConfig() {
         return RequestConfig.custom()
-            .setConnectionRequestTimeout(Timeout.ofSeconds(connectionTimeout))
-            .setResponseTimeout(Timeout.ofSeconds(socketTimeout))
+            .setConnectionRequestTimeout(Timeout.ofSeconds(properties.getConnectionTimeout()))
+            .setResponseTimeout(Timeout.ofSeconds(properties.getSocketTimeout()))
             .build();
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public HttpClient httpClient(PoolingHttpClientConnectionManager httpClientConnectionManager,
         RequestConfig requestConfig) {
 
@@ -114,11 +119,13 @@ public class HttpClientConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {
         return new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public RestTemplate restTemplate(ClientHttpRequestFactory clientHttpRequestFactory,
         List<ClientHttpRequestInterceptor> interceptors) {
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
@@ -137,6 +144,7 @@ public class HttpClientConfig {
 
     @Bean
     @Primary
+    @ConditionalOnMissingBean(RestClient.class)
     public RestClient restClient(ClientHttpRequestFactory clientHttpRequestFactory,
         List<ClientHttpRequestInterceptor> interceptors) {
         return RestClient.builder()
@@ -155,6 +163,7 @@ public class HttpClientConfig {
     }
 
     @Bean("proxyRestClient")
+    @ConditionalOnMissingBean(name = "proxyRestClient")
     public RestClient proxyRestClient(RestClient restClient, PoolingHttpClientConnectionManager poolingManager,
         RequestConfig requestConfig, ObjectProvider<ProxyProvider> provider) {
         // 这里传入的 provider 在请求时才会触发
@@ -192,6 +201,7 @@ public class HttpClientConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public ClientHttpRequestInterceptor requestResponseLoggingInterceptor() {
         return new HttpClientLogInterceptor();
     }

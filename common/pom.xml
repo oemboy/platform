@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.platform.center</groupId>
         <artifactId>center</artifactId>
-        <version>platform-jdk17-2026.01-SNAPSHOT</version>
+        <version>platform-jdk17-2026.04-SNAPSHOT</version>
     </parent>
     <packaging>pom</packaging>
     <artifactId>common</artifactId>
@@ -43,6 +43,10 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -110,6 +114,7 @@
             </plugin>
         </plugins>
     </build>
+
     <profiles>
         <profile>
             <id>lombokcode</id>
@@ -136,14 +141,25 @@
                             </execution>
                         </executions>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <properties>
+                <sourceDir>${delombokedSourceDir}</sourceDir>
+            </properties>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
+                                <phase>install</phase>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
                             </execution>
                         </executions>

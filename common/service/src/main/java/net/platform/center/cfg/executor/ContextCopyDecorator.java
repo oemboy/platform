@@ -19,18 +19,18 @@ import net.platform.center.util.LogUtil;
 import net.platform.center.util.RuntimeContext;
 
 /**
- * @Author: bing zi
- * @Date: 2021/6/4 15:22
+ * @author bing zi
+ * @since 2021/6/4 15:22
  */
 @Data
 public class ContextCopyDecorator implements TaskDecorator {
 
-    private VisibleExecutorConfig.Exclude excludeConfig;
+    private VisibleExecutorProperties excludeConfig;
 
     public ContextCopyDecorator() {
     }
 
-    public ContextCopyDecorator(VisibleExecutorConfig.Exclude excludeConfig) {
+    public ContextCopyDecorator(VisibleExecutorProperties excludeConfig) {
         this.excludeConfig = excludeConfig;
     }
 
@@ -56,7 +56,7 @@ public class ContextCopyDecorator implements TaskDecorator {
         final Map<String, Object> contextMap = context.getContextMap();
         if (Objects.nonNull(contextMap)) {
             final Set<String> excludeKey = Optional.ofNullable(getExcludeConfig())
-                .map(VisibleExecutorConfig.Exclude::getRuntimeExclude)
+                .map(item -> item.getExclude().getRuntimeExclude())
                 .orElse(Collections.emptySet());
 
             newContext.setContextMap(contextMap.entrySet()
