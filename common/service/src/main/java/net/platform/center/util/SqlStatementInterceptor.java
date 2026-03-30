@@ -93,7 +93,7 @@ public class SqlStatementInterceptor implements Interceptor {
         DfxSqlBean contextSqlBean = showSqlOnceMore ? showDfxSql(args) : dfxSqlBean;
         if (contextSqlBean != null) {
             contextSqlBean.setTimeSpan(span);
-            ApplicationContextHolder.setDfxSql(dfxSqlBean);
+            ApplicationContextHolder.setDfxSql(contextSqlBean);
         }
     }
 
@@ -135,7 +135,9 @@ public class SqlStatementInterceptor implements Interceptor {
 
     public String getParameterValue(Object obj) {
         String value;
-        if (obj instanceof String) {
+        if (obj == null) {
+            value = "NULL";
+        } else if (obj instanceof String) {
             value = "'" + obj + "'";
         } else if (obj instanceof Date date) {
             Instant instant = Instant.ofEpochMilli(date.getTime());
@@ -145,11 +147,7 @@ public class SqlStatementInterceptor implements Interceptor {
         } else if (obj instanceof Number num) {
             value = num.toString();
         } else {
-            if (obj != null) {
-                value = "'" + obj + "'";
-            } else {
-                value = "NULL";
-            }
+            value = "'" + obj + "'";
         }
         return value;
     }
