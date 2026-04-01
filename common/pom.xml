@@ -5,7 +5,8 @@
     <parent>
         <groupId>net.platform.center</groupId>
         <artifactId>center</artifactId>
-        <version>platform-jdk17-2026.04-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <packaging>pom</packaging>
     <artifactId>common</artifactId>
@@ -120,6 +121,7 @@
             <id>lombokcode</id>
             <properties>
                 <sourceDir>${delombokedSourceDir}</sourceDir>
+                <lombokcode.active>true</lombokcode.active>
             </properties>
             <build>
                 <plugins>
@@ -140,15 +142,19 @@
                                 </configuration>
                             </execution>
                         </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
         </profile>
         <profile>
             <id>release</id>
-            <properties>
-                <sourceDir>${delombokedSourceDir}</sourceDir>
-            </properties>
             <build>
                 <plugins>
                     <plugin>

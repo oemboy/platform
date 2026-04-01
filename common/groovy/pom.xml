@@ -5,7 +5,8 @@
     <parent>
         <groupId>net.platform.center</groupId>
         <artifactId>common</artifactId>
-        <version>platform-jdk17-2026.04-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>common-groovy</artifactId>
     <name>common-groovy</name>
@@ -59,6 +60,11 @@
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -124,13 +130,14 @@
                         <configuration>
                             <target>
                                 <mkdir dir="${project.basedir}/src/main/resources/flow/"/>
-                                <taskdef name="groovyc"
-                                         classname="org.codehaus.groovy.ant.Groovyc">
+                                <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
                                     <classpath refid="maven.compile.classpath"/>
                                 </taskdef>
                                 <mkdir dir="${project.build.outputDirectory}"/>
                                 <groovyc destdir="${project.build.outputDirectory}"
-                                         srcdir="${project.basedir}/src/main/resources/flow/" listfiles="true">
+                                         srcdir="${project.basedir}/src/main/resources/flow/"
+                                         listfiles="true"
+                                         targetBytecode="${groovy.targetBytecode}">
                                     <classpath refid="maven.compile.classpath"/>
                                 </groovyc>
                             </target>
@@ -151,7 +158,9 @@
                                 </taskdef>
                                 <mkdir dir="${project.build.testOutputDirectory}"/>
                                 <groovyc destdir="${project.build.testOutputDirectory}"
-                                         srcdir="${project.basedir}/src/test/resources/flow/" listfiles="true">
+                                         srcdir="${project.basedir}/src/test/resources/flow/"
+                                         listfiles="true"
+                                         targetBytecode="${groovy.targetBytecode}">
                                     <classpath refid="maven.test.classpath"/>
                                 </groovyc>
                             </target>
