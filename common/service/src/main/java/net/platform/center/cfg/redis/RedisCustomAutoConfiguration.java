@@ -14,6 +14,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 
@@ -34,11 +35,9 @@ public class RedisCustomAutoConfiguration {
 
     @Bean
     public GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer(Jackson2ObjectMapperBuilder builder) {
-        // 构建一个遵循下游项目配置的 ObjectMapper
         ObjectMapper objectMapper = builder.createXmlMapper(false).build();
-
-        // 必须进行 Redis 特有的定制：在 JSON 中包含类信息
-        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
+        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL,
+            JsonTypeInfo.As.PROPERTY);
         return new GenericJackson2JsonRedisSerializer(objectMapper);
     }
 
