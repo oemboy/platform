@@ -4,6 +4,7 @@ package net.platform.center.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,6 +21,8 @@ import org.junit.jupiter.api.Test;
  */
 class TimeWheelTest {
     private TimeWheel timeWheel;
+
+    private final Random random = new Random();
 
     @BeforeEach
     void setUp() {
@@ -40,7 +43,8 @@ class TimeWheelTest {
 
         timeWheel.addTask(delay, latch::countDown);
 
-        latch.await(1000, TimeUnit.MILLISECONDS);
+        boolean await = latch.await(1000, TimeUnit.MILLISECONDS);
+        assertTrue(await, "延迟任务 (500ms) 内处理完毕");
         long duration = System.currentTimeMillis() - start;
 
         // 允许一个 TICK_MS (100ms) 的误差范围
@@ -57,7 +61,8 @@ class TimeWheelTest {
 
         timeWheel.addTask(delay, latch::countDown);
 
-        latch.await(17, TimeUnit.SECONDS);
+        boolean await = latch.await(17, TimeUnit.SECONDS);
+        assertTrue(await, "延迟任务 (15s) 内处理完毕");
         long duration = System.currentTimeMillis() - start;
 
         // 允许误差：由于经过了两次降级，允许 200ms 左右的逻辑对齐误差
@@ -88,7 +93,7 @@ class TimeWheelTest {
         long start = System.currentTimeMillis();
         for (int i = 0; i < taskCount; i++) {
             // 模拟 100ms 到 2000ms 之间的随机订单超时
-            long delay = (long) (Math.random() * 1900 + 100);
+            long delay = random.nextLong(100L, 200L);
             timeWheel.addTask(delay, () -> {
                 executionCount.increment();
                 latch.countDown();

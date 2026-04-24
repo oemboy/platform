@@ -73,39 +73,15 @@
         </dependency>
         <dependency>
             <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>${groovy.version}</version>
-            <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <artifactId>groovy-console</artifactId>
-                    <groupId>org.apache.groovy</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>groovy-test</artifactId>
-                    <groupId>org.apache.groovy</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>groovy-servlet</artifactId>
-                    <groupId>org.apache.groovy</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>groovy-groovydoc</artifactId>
-                    <groupId>org.apache.groovy</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>groovy-docgenerator</artifactId>
-                    <groupId>org.apache.groovy</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>groovy-swing</artifactId>
-                    <groupId>org.apache.groovy</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>groovy-cli-picocli</artifactId>
-                    <groupId>org.apache.groovy</groupId>
-                </exclusion>
-            </exclusions>
+            <artifactId>groovy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-ant</artifactId>
         </dependency>
     </dependencies>
     <build>
