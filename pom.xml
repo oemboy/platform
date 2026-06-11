@@ -10,13 +10,13 @@
     <description>platform project pom</description>
     <properties>
         <project.jdk.version>17</project.jdk.version>
-        <revision>platform-jdk${project.jdk.version}-2026.04-SNAPSHOT</revision>
+        <revision>platform-jdk${project.jdk.version}-2026.06-SNAPSHOT</revision>
         <groovy.targetBytecode>${project.jdk.version}</groovy.targetBytecode>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lombok.version>1.18.46</lombok.version>
         <springdoc.version>2.8.17</springdoc.version>
-        <spring-boot.version>3.5.14</spring-boot.version>
-        <groovy.version>4.0.31</groovy.version>
+        <spring-boot.version>3.5.15</spring-boot.version>
+        <groovy.version>4.0.32</groovy.version>
         <guava.version>33.5.0-jre</guava.version>
         <docker-maven-version>0.48.1</docker-maven-version>
         <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
