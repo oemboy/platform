@@ -17,7 +17,7 @@ import java.util.stream.StreamSupport;
  * @author bing zi
  * @since 2021/8/3 14:27
  */
-public class BatchSpliterator<E, C extends Collection<E>> implements Spliterator<C> {
+public final class BatchSpliterator<E, C extends Collection<E>> implements Spliterator<C> {
 
     private final Spliterator<E> base;
 

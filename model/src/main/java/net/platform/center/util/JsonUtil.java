@@ -4,6 +4,9 @@ package net.platform.center.util;
 import static net.platform.center.exception.ExceptionEnum.ERR_COMMON_VALID;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +32,9 @@ public final class JsonUtil {
     private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
         // 配置特性
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .defaultTimeZone(TimeZone.getTimeZone("GMT+8"))
+        .defaultDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA))
         .build();
 
     private JsonUtil() {

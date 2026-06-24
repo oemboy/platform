@@ -233,5 +233,7 @@ mvn versions:display-plugin-updates
 mvn rewrite:run \
   -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:RELEASE \
   -Drewrite.activeRecipes=org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0
-
+mvn rewrite:run \
+        -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:RELEASE \
+        -Drewrite.activeRecipes=org.openrewrite.java.spring.boot4.SpringBootProperties_4_1
 ```

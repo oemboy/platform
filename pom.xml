@@ -15,8 +15,8 @@
         <groovy.targetBytecode>${project.jdk.version}</groovy.targetBytecode>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lombok.version>1.18.46</lombok.version>
-        <springdoc.version>3.0.2</springdoc.version>
-        <spring-boot.version>4.0.6</spring-boot.version>
+        <springdoc.version>3.0.3</springdoc.version>
+        <spring-boot.version>4.1.1</spring-boot.version>
         <groovy.version>5.0.5</groovy.version>
         <guava.version>33.4.8-jre</guava.version>
         <docker-maven-version>0.48.1</docker-maven-version>
@@ -27,14 +27,14 @@
         <commons-io.version>2.22.0</commons-io.version>
         <commons-net.version>3.13.0</commons-net.version>
         <commons-compress.version>1.28.0</commons-compress.version>
-        <mybatis.spring.boot.version>4.0.1</mybatis.spring.boot.version>
-        <cosid.version>2.15.1</cosid.version>
         <jool.version>0.9.15</jool.version>
         <joor.version>0.9.15</joor.version>
         <skywalking.version>9.7.0</skywalking.version>
-        <pagehelper-starter.version>2.1.1</pagehelper-starter.version>
         <dom4j.version>2.1.3</dom4j.version>
-        <redisson.version>4.3.0</redisson.version>
+        <pagehelper-starter.version>4.1.1</pagehelper-starter.version>
+        <mybatis.spring.boot.version>4.1.0</mybatis.spring.boot.version>
+        <cosid.version>3.2.1</cosid.version>
+        <redisson.version>4.7.0</redisson.version>
         <!--PDM config-->
         <checkstyle.config.location>${devops.site}/checkstyle.xml</checkstyle.config.location>
         <excludeFilter.url>${devops.site}/findbugs-exclude-filter.xml</excludeFilter.url>
@@ -43,7 +43,7 @@
         <origSourceDir>${project.basedir}/src/main/java</origSourceDir>
         <delombokedSourceDir>${project.build.directory}/delombok</delombokedSourceDir>
         <!--jacoco config-->
-        <jacoco.version>0.8.14</jacoco.version>
+        <jacoco.version>0.8.15</jacoco.version>
         <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
         <!--sonar config-->
         <sonar.projectKey>platform-jdk${project.jdk.version}</sonar.projectKey>
@@ -247,7 +247,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.6.2</version>
+                    <version>3.6.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -317,7 +317,7 @@
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.9.8.3</version>
+                    <version>4.10.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -352,7 +352,7 @@
                 <plugin>
                     <groupId>org.openrewrite.maven</groupId>
                     <artifactId>rewrite-maven-plugin</artifactId>
-                    <version>6.38.0</version>
+                    <version>6.46.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -409,7 +409,7 @@
                     <dependency>
                         <groupId>org.openrewrite.recipe</groupId>
                         <artifactId>rewrite-spring</artifactId>
-                        <version>6.30.1</version>
+                        <version>6.37.1</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -491,7 +491,7 @@
             <plugin>
                 <groupId>io.github.git-commit-id</groupId>
                 <artifactId>git-commit-id-maven-plugin</artifactId>
-                <version>9.0.2</version>
+                <version>10.0.0</version>
                 <executions>
                     <execution>
                         <id>get-the-git-infos</id>
