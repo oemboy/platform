@@ -14,12 +14,12 @@
         <revision>platform-jdk${project.jdk.version}-2026.09-SNAPSHOT</revision>
         <groovy.targetBytecode>${project.jdk.version}</groovy.targetBytecode>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lombok.version>1.18.46</lombok.version>
-        <springdoc.version>3.0.3</springdoc.version>
-        <spring-boot.version>4.1.1</spring-boot.version>
-        <groovy.version>5.0.5</groovy.version>
-        <guava.version>33.4.8-jre</guava.version>
-        <docker-maven-version>0.48.1</docker-maven-version>
+        <lombok.version>1.18.48</lombok.version>
+        <springdoc.version>3.1.1</springdoc.version>
+        <spring-boot.version>4.1.2</spring-boot.version>
+        <groovy.version>5.0.8</groovy.version>
+        <guava.version>33.6.0-jre</guava.version>
+        <docker-maven-version>0.49.0</docker-maven-version>
         <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
         <commons-cli.version>1.9.0</commons-cli.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
